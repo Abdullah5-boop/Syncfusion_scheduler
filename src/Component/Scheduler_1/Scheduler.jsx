@@ -97,17 +97,125 @@ const appointmentData = [
     // }
 ];
 // 
+const DataFetch = (arg) => {
+
+}
+const EventClicked = (arg) => {
+    console.log("Event clike line 105 -> ", arg);
+}
+
+const disableDefaultEditor = (args) => {
+
+    console.log("disableDefaultEditor fired ");
+
+};
 
 
+
+// const onActionBegin = (args) => {
+//     if (args.requestType === "eventCreate" || args.requestType == "Editor" || args.requestType === "eventChange") {
+//         console.log("onActionBegin -> ", args.data[0]);
+//         let startTime = new Date(args.data[0].StartTime)
+//         let endTime = new Date(args.data[0].EndTime)
+//         let resourceId = args.data[0].ResourceId;
+//         console.log("Start Time: ", startTime);
+//         console.log("End Time: ", endTime);
+//         console.log("Resource ID: ", resourceId);
+
+
+
+//         const newEvent = args.data[0];
+
+//         const conflictEvent = appointmentData.find(evt => {
+//             if (evt.ResourceId !== resourceId) return false; // check same room
+
+//             const evtStart = new Date(evt.StartTime);
+//             const evtEnd = new Date(evt.EndTime);
+
+//             return start < evtEnd && end > evtStart; // overlap logic
+//         });
+//         console.log("Conflict Event: ", conflictEvent);
+
+
+//         if (conflictEvent) {
+//             console.log("❌ Conflict detected:");
+//             console.log("Event Id:", conflictEvent.Id);
+//             console.log("Subject:", conflictEvent.Subject);
+//             console.log("Start:", conflictEvent.StartTime);
+//             console.log("End:", conflictEvent.EndTime);
+//         } else {
+//             console.log("✅ No conflict. Event can be created.");
+//         }
+
+
+
+//     }
+
+
+
+
+// };
+
+
+
+const onActionBegin = (args) => {
+    if (args.requestType === "eventCreate" || args.requestType === "eventChange") {
+        const eventData = Array.isArray(args.data) ? args.data[0] : args.data;
+
+        console.log("onActionBegin -> ", eventData);
+
+        let startTime = new Date(eventData.StartTime);
+        let endTime = new Date(eventData.EndTime);
+        let resourceId = eventData.ResourceId;
+
+        const conflictEvent = appointmentData.find(evt => {
+            if (evt.Id === eventData.Id) return false;  // ignore same event on update
+            if (evt.ResourceId !== resourceId) return false;
+
+            const evtStart = new Date(evt.StartTime);
+            const evtEnd = new Date(evt.EndTime);
+
+            // overlap condition
+            return startTime < evtEnd && endTime > evtStart;
+        });
+
+        if (conflictEvent) {
+            console.log("❌ Conflict detected with event:", conflictEvent);
+
+           let comp = document.querySelector(".e-title-text");
+           console.log("comp -> ", comp);
+           let newTitle = document.createElement("div");
+              newTitle.innerHTML = "Conflict detected with event: " + conflictEvent.Subject;
+              newTitle.style.color = "red";
+              newTitle.style.fontWeight = "bold";
+              if (comp) {
+                comp.appendChild(newTitle);
+              }
+            if (form) form.appendChild(errorMsg);
+
+            return;
+        }
+
+        console.log("✅ No conflict. Event can be created.");
+    }
+};
+
+
+
+
+
+console.log("_".repeat(50));
 function Scheduler() {
 
     return (
         <ScheduleComponent cssClass='schedule-cell-dimension'
+            actionBegin={onActionBegin}
+            popupOpen={disableDefaultEditor}
             width="100%"
             height="550px"
-
-
+            renderCell={DataFetch}
             rowAutoHeight={true}
+            eventClick={EventClicked}
             eventSettings={{ dataSource: appointmentData }}
             group={{ resources: ['Resources', 'Group'] }}
             views={[
