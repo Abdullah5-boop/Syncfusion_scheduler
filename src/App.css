@@ -1,0 +1,67 @@
+/* #root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+} */
+.e-work-cell1 {
+  width: 750px !important;
+  /* height: 150px !important; */
+  background-color: #146fbe !important;
+}
+
+/* ----------- TIMELINE CELL HEIGHT ------------ */
+.schedule-cell-dimension .e-timeline-view .e-resource-left-td,
+.schedule-cell-dimension .e-timeline-view .e-resource-cells,
+.schedule-cell-dimension .e-timeline-view .e-work-cells {
+    height: 60px !important;  /* increase row height */
+}
+
+/* ----------- TIMELINE CELL WIDTH ------------ */
+.schedule-cell-dimension .e-timeline-view .e-time-slots {
+    min-width: 150px !important; /* width of each time slot */
+}
+
+.schedule-cell-dimension .e-timeline-view .e-content-table td {
+    min-width: 150px !important; /* safe fallback */
+}
+.e-schedule .e-work-cells,
+.e-schedule .e-all-day-cells {
+  height: 60px !important;     /* Cell Height */
+}
