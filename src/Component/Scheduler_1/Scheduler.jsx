@@ -1,11 +1,11 @@
 
-
-// import  from '@syncfusion/ej2-react-schedule';
 import {
     ScheduleComponent, Day, Week, WorkWeek, Month, Agenda,
     Inject, ResourcesDirective, ResourceDirective,
     TimelineViews, TimelineMonth, DragAndDrop, Resize
 } from '@syncfusion/ej2-react-schedule';
+// import { BeforeOpenCloseMenuEventArgs, MenuEventArgs, MenuItemModel, ContextMenuComponent } from '@syncfusion/ej2-react-navigations';
+
 
 let resourceDataSourceSecondLayer = [
     { Name: "Room 1", Id: 1, Color: "#1abc9c" },
@@ -182,15 +182,15 @@ const onActionBegin = (args) => {
         if (conflictEvent) {
             console.log("❌ Conflict detected with event:", conflictEvent);
 
-           let comp = document.querySelector(".e-title-text");
-           console.log("comp -> ", comp);
-           let newTitle = document.createElement("div");
-              newTitle.innerHTML = "Conflict detected with event: " + conflictEvent.Subject;
-              newTitle.style.color = "red";
-              newTitle.style.fontWeight = "bold";
-              if (comp) {
+            let comp = document.querySelector(".e-title-text");
+            console.log("comp -> ", comp);
+            let newTitle = document.createElement("div");
+            newTitle.innerHTML = "Conflict detected with event: " + conflictEvent.Subject;
+            newTitle.style.color = "red";
+            newTitle.style.fontWeight = "bold";
+            if (comp) {
                 comp.appendChild(newTitle);
-              }
+            }
             if (form) form.appendChild(errorMsg);
 
             return;
@@ -201,6 +201,38 @@ const onActionBegin = (args) => {
 };
 
 
+const onContextMenuOpen = (args) => {
+    // Only show menu when right-clicking an event
+    if (!args.element || !args.element.classList.contains("e-appointment")) {
+        args.cancel = true;
+    }
+};
+
+
+
+const onContextMenuClick = (args) => {
+    const scheduleObj = document.querySelector('.e-schedule').ej2_instances[0];
+
+    // get event details from clicked event element
+    const eventObj = scheduleObj.getEventDetails(args.element);
+
+    switch (args.item.id) {
+        case 'open':
+            scheduleObj.openEditor(eventObj, "Save");
+            break;
+
+        case 'delete':
+            scheduleObj.deleteEvent(eventObj.Id);
+            break;
+
+        case 'customAction':
+            alert("Custom Action clicked on event: " + eventObj.Subject);
+            break;
+
+        default:
+            break;
+    }
+};
 
 
 
@@ -208,7 +240,8 @@ console.log("_".repeat(50));
 function Scheduler() {
 
     return (
-        <ScheduleComponent cssClass='schedule-cell-dimension'
+        <ScheduleComponent
+            cssClass='schedule-cell-dimension'
             actionBegin={onActionBegin}
             popupOpen={disableDefaultEditor}
             width="100%"
@@ -245,8 +278,9 @@ function Scheduler() {
             ]}
             currentView="TimelineMonth"
             allowDragAndDrop={true}
-
             allowResizing={true}
+            
+            
         >
             <ResourcesDirective >
                 <ResourceDirective
