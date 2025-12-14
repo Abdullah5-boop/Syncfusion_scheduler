@@ -5,6 +5,7 @@ import {
     TimelineViews, TimelineMonth, DragAndDrop, Resize
 } from '@syncfusion/ej2-react-schedule';
 import { useState } from 'react';
+import AddEventPopup from '../Popup/AddEventPopup';
 // import { BeforeOpenCloseMenuEventArgs, MenuEventArgs, MenuItemModel, ContextMenuComponent } from '@syncfusion/ej2-react-navigations';
 
 const special = [
@@ -131,7 +132,7 @@ const onActionBegin = (args) => {
             return data ? "dateMatchDone" : "dataMatchFail";
 
         }
-        function specialNotification(NotificationclassName){
+        function specialNotification(NotificationclassName) {
             let form = document.querySelector(`.${NotificationclassName}`);
             let errorMsg = document.createElement("div");
             errorMsg.innerHTML = "Scheduling conflict with special working hours!";
@@ -151,10 +152,11 @@ const onActionBegin = (args) => {
                         es.getTime() >= s.startTime.getTime() &&
                         ee.getTime() <= s.endTime.getTime()
                     ) {
-                        
+
                         console.log("date and time match ");
                         return "dateAndTimeMatch";
                     } else {
+                        args.cancel = true;
                         specialNotification("e-title-text")
                         console.log("date match but time not match ");
                         confirm("Scheduling conflict with special working hours!");
@@ -197,7 +199,7 @@ const onActionBegin = (args) => {
 
 
             // }
-           // return "loop does not work";
+            // return "loop does not work";
         }
 
         console.log("_".repeat(20), "\n", "map function");
@@ -211,7 +213,7 @@ const onActionBegin = (args) => {
 
 
         console.log("_".repeat(20), "\n", "foreach function");
-       console.log( isWithinWorkingHours());
+        console.log(isWithinWorkingHours());
         console.log("_".repeat(20), "\n");
 
 
@@ -228,7 +230,7 @@ const onActionBegin = (args) => {
             if (comp) {
                 args.cancel = true;
                 comp.appendChild(newTitle);
-                
+
             }
             if (form) form.appendChild(errorMsg);
 
@@ -279,85 +281,94 @@ const onContextMenuClick = (args) => {
 
 console.log("_".repeat(50));
 function Scheduler() {
+    const [showPopup, setShowPopup] = useState(false);
+    const [open, setOpen] = useState(false);
 
+    const openCustomPopup = (args) => {
+        // setEventData(data);
+        // args.cancel = true;
 
+        // setShowPopup(true);
+
+        // console.log("openCustomPopup data -> ", data);
+
+    };
+    console.log("Scheduler component rendered ", showPopup);
     return (
-        <ScheduleComponent
+        <>
+            <ScheduleComponent
+                // popupOpen={openCustomPopup}
+                // editorTemplate={AddEventPopup}
+                cssClass='schedule-cell-dimension'
+                actionBegin={onActionBegin}
+                // popupOpen={disableDefaultEditor}
+                width="100%"
+                height="550px"
+                renderCell={DataFetch}
+                rowAutoHeight={true}
+                eventClick={EventClicked}
+                eventSettings={{ dataSource: appointmentData }}
+                group={{ resources: ['Resources', 'Group'] }}
+                views={[
+                    "Day",
+                    "Week",
+                    "WorkWeek",
+                    "Month",
+                    "Agenda",
+                    { option: "TimelineDay" },
+                    { option: "TimelineWeek" },
+                    {
+                        option: "TimelineWorkWeek",
+                        interval: 4,
+                        showWeekend: true,
+                        workDays: [0, 1, 2, 3, 4, 6],
+                        startHour: "08:00",
+                        endHour: "14:00",
+                        timeScale: {
+                            enable: true,
+                            interval: 140,
+                            slotCount: 3,
+                        }
 
-            cssClass='schedule-cell-dimension'
-            actionBegin={onActionBegin}
-            // popupOpen={disableDefaultEditor}
-            width="100%"
-            height="550px"
-            renderCell={DataFetch}
-            rowAutoHeight={true}
-            eventClick={EventClicked}
-            eventSettings={{ dataSource: appointmentData }}
-            group={{ resources: ['Resources', 'Group'] }}
-            views={[
-                "Day",
-                "Week",
-                "WorkWeek",
-                "Month",
-                "Agenda",
-                { option: "TimelineDay" },
-                { option: "TimelineWeek" },
-                {
-                    option: "TimelineWorkWeek",
-                    interval: 4,
-                    showWeekend: true,
-                    workDays: [0, 1, 2, 3, 4, 6],
-                    startHour: "08:00",
-                    endHour: "14:00",
-                    timeScale: {
-                        enable: true,
-                        interval: 140,
-                        slotCount: 3,
-                    }
+                    },
+                    { option: "TimelineMonth" }
 
-                },
-                { option: "TimelineMonth" }
-
-            ]}
-            currentView="TimelineMonth"
-            allowDragAndDrop={true}
-            allowResizing={true}
-
-
-
-        >
-            <ResourcesDirective >
-                <ResourceDirective
-
-                    field="ResourceId"        // <-- MUST match appointmentData field
-                    title="Rooms / Labs"
-                    name="Resources"          // <-- used internally for binding
-                    allowMultiple={true}
-                    dataSource={resourceDataSourceSecondLayer}
-                    textField="Name"          // <-- must match resourceDataSource keys
-                    idField="Id"
-                    colorField="Color"
-                />
-
-
-                <ResourceDirective
-                    textField='Name'
-                    idField='Id'
-                    colorField='Color'
-                    groupIDField='GroupId'
-                    allowMultiple={true}
-                    field='GroupId'
-                    name='Group'
-                    title='Group Title'
-                    dataSource={resourceDataSourceFirstLayer}
-                >
-
-                </ResourceDirective>
-            </ResourcesDirective>
+                ]}
+                currentView="TimelineMonth"
+                allowDragAndDrop={true}
+                allowResizing={true}
 
 
 
+            >
+                <ResourcesDirective >
+                    <ResourceDirective
 
+                        field="ResourceId"        // <-- MUST match appointmentData field
+                        title="Rooms / Labs"
+                        name="Resources"          // <-- used internally for binding
+                        allowMultiple={true}
+                        dataSource={resourceDataSourceSecondLayer}
+                        textField="Name"          // <-- must match resourceDataSource keys
+                        idField="Id"
+                        colorField="Color"
+                    />
+
+
+                    <ResourceDirective
+                        textField='Name'
+                        idField='Id'
+                        colorField='Color'
+                        groupIDField='GroupId'
+                        allowMultiple={true}
+                        field='GroupId'
+                        name='Group'
+                        title='Group Title'
+                        dataSource={resourceDataSourceFirstLayer}
+                    >
+
+                    </ResourceDirective>
+                </ResourcesDirective>
 
 
 
@@ -366,9 +377,19 @@ function Scheduler() {
 
 
 
-            <Inject services={[Day, Week, WorkWeek, Month, Agenda, TimelineViews, TimelineMonth, DragAndDrop, Resize]} />
 
-        </ScheduleComponent>
+
+
+
+                <Inject services={[Day, Week, WorkWeek, Month, Agenda, TimelineViews, TimelineMonth, DragAndDrop, Resize]} />
+
+
+
+
+
+
+            </ScheduleComponent>
+        </>
     );
 }
 

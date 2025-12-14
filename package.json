@@ -12,6 +12,7 @@
   "dependencies": {
     "@syncfusion/ej2-react-grids": "^31.2.18",
     "@syncfusion/ej2-react-navigations": "^31.2.16",
+    "@syncfusion/ej2-react-popups": "^31.2.12",
     "@syncfusion/ej2-react-schedule": "^31.2.15",
     "@syncfusion/ej2-react-treegrid": "^31.2.15",
     "react": "^19.2.0",
