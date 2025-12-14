@@ -65,3 +65,6 @@
 .e-schedule .e-all-day-cells {
   height: 60px !important;     /* Cell Height */
 }
+.dec-16-holiday-cell{
+  background-color: #7f0505 !important;
+}

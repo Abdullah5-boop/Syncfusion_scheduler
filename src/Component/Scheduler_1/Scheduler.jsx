@@ -4,9 +4,29 @@ import {
     Inject, ResourcesDirective, ResourceDirective,
     TimelineViews, TimelineMonth, DragAndDrop, Resize
 } from '@syncfusion/ej2-react-schedule';
+import { useState } from 'react';
 // import { BeforeOpenCloseMenuEventArgs, MenuEventArgs, MenuItemModel, ContextMenuComponent } from '@syncfusion/ej2-react-navigations';
 
+const special = [
+    {
+        date: new Date(2025, 11, 16), // Dec 16, 2025
+        startTime: new Date(2025, 11, 16, 8, 0),
+        endTime: new Date(2025, 11, 16, 10, 0),
+        isWorking: true,
+        text: 'Public Holiday',
+        cssClass: 'dec-16-holiday-cell'
+    },
+    {
+        date: new Date(2025, 11, 20), // Dec 16, 2025
+        startTime: new Date(2025, 11, 20, 8, 0),
+        endTime: new Date(2025, 11, 20, 12, 0),
+        isWorking: true,
+        text: 'nothing ',
+        cssClass: 'dec-16-holiday-cell'
+    },
 
+
+]
 let resourceDataSourceSecondLayer = [
     { Name: "Room 1", Id: 1, Color: "#1abc9c" },
     { Name: "Room 2", Id: 2, Color: "#3498db" },
@@ -21,7 +41,7 @@ let resourceDataSourceFirstLayer = [
     { Name: "B-2", Id: 4, Color: "#77f807ff", GroupId: 2 },
     { Name: "c-1", Id: 5, Color: "#e67e22", GroupId: 3 },
     { Name: "B-4", Id: 6, Color: "#c3116aff", GroupId: 4 },
-    { Name: "B-4", Id: 7, Color: "#c3116aff", GroupId: 4 }
+    { Name: "B-5", Id: 7, Color: "#c3116aff", GroupId: 4 }
 ];
 
 const appointmentData = [
@@ -39,8 +59,8 @@ const appointmentData = [
     {
         Id: 2,
         Subject: 'Client Interview (Internal)',
-        StartTime: new Date(2025, 11, 13, 10, 0),
-        EndTime: new Date(2025, 11, 17, 13, 0),
+        StartTime: new Date(2025, 11, 18, 10, 0),
+        EndTime: new Date(2025, 11, 19, 13, 0),
         ResourceId: 2,
         GroupId: 3
     },
@@ -54,47 +74,7 @@ const appointmentData = [
         GroupId: 2
     },
 
-    // // Holiday + Lunch (Dec 22)
-    // {
-    //     Id: 4,
-    //     Subject: 'Company Holiday',
-    //     StartTime: new Date(2025, 11, 22),
-    //     EndTime: new Date(2025, 11, 23),
-    //     IsAllDay: true,
-    //     ResourceId: 2,
-    //     GroupId: 1
-    // },
 
-    // {
-    //     Id: 5,
-    //     Subject: 'Lunch with Team',
-    //     StartTime: new Date(2025, 11, 22, 12, 0),
-    //     EndTime: new Date(2025, 11, 22, 13, 0),
-    //     ResourceId: 2,
-    //     GroupId: 1
-    // },
-
-    // // Recurring daily (Dec 17 → Dec 28)
-    // {
-    //     Id: 6,
-    //     Subject: 'Daily Standup',
-    //     StartTime: new Date(2025, 11, 17, 9, 30),
-    //     EndTime: new Date(2025, 11, 17, 10, 0),
-    //     RecurrenceRule: 'FREQ=DAILY;INTERVAL=1;COUNT=12',
-    //     ResourceId: 3,
-    //     GroupId: 2
-    // },
-
-    // // Multi-resource call (Dec 27)
-    // {
-    //     Id: 7,
-    //     Subject: 'Large Conference Call',
-    //     StartTime: new Date(2025, 11, 27, 14, 0),
-    //     EndTime: new Date(2025, 11, 27, 16, 0),
-    //     ResourceId: [1, 2],
-    //     Description: 'Review Q4 results.',
-    //     GroupId: 3
-    // }
 ];
 // 
 const DataFetch = (arg) => {
@@ -112,57 +92,14 @@ const disableDefaultEditor = (args) => {
 
 
 
-// const onActionBegin = (args) => {
-//     if (args.requestType === "eventCreate" || args.requestType == "Editor" || args.requestType === "eventChange") {
-//         console.log("onActionBegin -> ", args.data[0]);
-//         let startTime = new Date(args.data[0].StartTime)
-//         let endTime = new Date(args.data[0].EndTime)
-//         let resourceId = args.data[0].ResourceId;
-//         console.log("Start Time: ", startTime);
-//         console.log("End Time: ", endTime);
-//         console.log("Resource ID: ", resourceId);
-
-
-
-//         const newEvent = args.data[0];
-
-//         const conflictEvent = appointmentData.find(evt => {
-//             if (evt.ResourceId !== resourceId) return false; // check same room
-
-//             const evtStart = new Date(evt.StartTime);
-//             const evtEnd = new Date(evt.EndTime);
-
-//             return start < evtEnd && end > evtStart; // overlap logic
-//         });
-//         console.log("Conflict Event: ", conflictEvent);
-
-
-//         if (conflictEvent) {
-//             console.log("❌ Conflict detected:");
-//             console.log("Event Id:", conflictEvent.Id);
-//             console.log("Subject:", conflictEvent.Subject);
-//             console.log("Start:", conflictEvent.StartTime);
-//             console.log("End:", conflictEvent.EndTime);
-//         } else {
-//             console.log("✅ No conflict. Event can be created.");
-//         }
-
-
-
-//     }
-
-
-
-
-// };
-
-
 
 const onActionBegin = (args) => {
+    let specialDayConfictState = false;
     if (args.requestType === "eventCreate" || args.requestType === "eventChange") {
         const eventData = Array.isArray(args.data) ? args.data[0] : args.data;
 
         console.log("onActionBegin -> ", eventData);
+
 
         let startTime = new Date(eventData.StartTime);
         let endTime = new Date(eventData.EndTime);
@@ -178,6 +115,106 @@ const onActionBegin = (args) => {
             // overlap condition
             return startTime < evtEnd && endTime > evtStart;
         });
+        let dateMatch = "dateMatch";
+        let timematch = "timematch";
+
+
+
+        const es = new Date(eventData.StartTime)
+        const ee = new Date(eventData.EndTime)
+        function isSameDay(d1, d2) {
+            let data =
+                d1.getFullYear() === d2.getFullYear() &&
+                d1.getMonth() === d2.getMonth() &&
+                d1.getDate() === d2.getDate()
+            console.log("isSameDay data -> ", data);
+            return data ? "dateMatchDone" : "dataMatchFail";
+
+        }
+        function specialNotification(NotificationclassName){
+            let form = document.querySelector(`.${NotificationclassName}`);
+            let errorMsg = document.createElement("div");
+            errorMsg.innerHTML = "Scheduling conflict with special working hours!";
+            errorMsg.style.color = "red";
+            errorMsg.style.fontWeight = "bold";
+            if (form) form.appendChild(errorMsg);
+            // return errorMsg;
+        }
+        function isWithinWorkingHours() {
+
+            special.forEach(s => {
+                let dateCheck = isSameDay(es, s.date);
+                console.log("dateCheck -> ", dateCheck);
+
+                if (dateCheck == "dateMatchDone") {
+                    if (
+                        es.getTime() >= s.startTime.getTime() &&
+                        ee.getTime() <= s.endTime.getTime()
+                    ) {
+                        
+                        console.log("date and time match ");
+                        return "dateAndTimeMatch";
+                    } else {
+                        specialNotification("e-title-text")
+                        console.log("date match but time not match ");
+                        confirm("Scheduling conflict with special working hours!");
+                        return "DateMatchTimeNotMatch";
+
+                    }
+                } else {
+                    console.log("date not match ");
+                    return "dateNotMatch";
+                }
+            })
+
+
+
+            // for (const s of special) {
+            //     let dateCheck = isSameDay(es, s.date);
+            //     if (dateCheck === "dateMatchDone") {
+            //         if (
+            //             es.getTime() >= s.startTime.getTime() &&
+            //             ee.getTime() <= s.endTime.getTime()
+            //         ) 
+            //         { return "dateAndTimeMatch";
+
+            //          }
+            //         else {
+            //             return "DatetimeNotMatch";
+            //         }
+            //     }
+            //     else return "dateNotMatch";
+
+
+            //     // if (isSameDay(es, s.date)) {
+            //     //     if (
+            //     //         es.getTime() >= s.startTime.getTime() &&
+            //     //         ee.getTime() <= s.endTime.getTime()
+            //     //     ) { return true; }
+            //     //     else return false;
+            //     // }
+            //     // else return false;
+
+
+            // }
+           // return "loop does not work";
+        }
+
+        console.log("_".repeat(20), "\n", "map function");
+        console.log(special.map(s => isSameDay(s.startTime, es)));
+
+        // let dateStatus = isWithinWorkingHours();
+        // console.log("*_".repeat(20), "\n");
+        // console.log("dateStatus -> ", dateStatus);
+
+        console.log("_".repeat(20), "\n");
+
+
+        console.log("_".repeat(20), "\n", "foreach function");
+       console.log( isWithinWorkingHours());
+        console.log("_".repeat(20), "\n");
+
+
 
         if (conflictEvent) {
             console.log("❌ Conflict detected with event:", conflictEvent);
@@ -189,7 +226,9 @@ const onActionBegin = (args) => {
             newTitle.style.color = "red";
             newTitle.style.fontWeight = "bold";
             if (comp) {
+                args.cancel = true;
                 comp.appendChild(newTitle);
+                
             }
             if (form) form.appendChild(errorMsg);
 
@@ -198,6 +237,8 @@ const onActionBegin = (args) => {
 
         console.log("✅ No conflict. Event can be created.");
     }
+
+
 };
 
 
@@ -239,11 +280,13 @@ const onContextMenuClick = (args) => {
 console.log("_".repeat(50));
 function Scheduler() {
 
+
     return (
         <ScheduleComponent
+
             cssClass='schedule-cell-dimension'
             actionBegin={onActionBegin}
-            popupOpen={disableDefaultEditor}
+            // popupOpen={disableDefaultEditor}
             width="100%"
             height="550px"
             renderCell={DataFetch}
@@ -279,8 +322,9 @@ function Scheduler() {
             currentView="TimelineMonth"
             allowDragAndDrop={true}
             allowResizing={true}
-            
-            
+
+
+
         >
             <ResourcesDirective >
                 <ResourceDirective
