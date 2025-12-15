@@ -7,6 +7,7 @@ import {
 import { useState } from 'react';
 import AddEventPopup from '../Popup/AddEventPopup';
 import CellTempleteOne from '../CellTemplete/CellTempleteOne';
+// import onActionBegin from '../Other/OnActionBegin';
 // import { BeforeOpenCloseMenuEventArgs, MenuEventArgs, MenuItemModel, ContextMenuComponent } from '@syncfusion/ej2-react-navigations';
 
 const special = [
@@ -85,9 +86,6 @@ const DataFetch = (arg) => {
 const EventClicked = (arg) => {
     console.log("Event clike line 105 -> ", arg);
 }
-
-
-
 
 
 
@@ -241,50 +239,14 @@ const onActionBegin = (args) => {
 };
 
 
-const onContextMenuOpen = (args) => {
-    // Only show menu when right-clicking an event
-    if (!args.element || !args.element.classList.contains("e-appointment")) {
-        args.cancel = true;
-    }
-};
 
-
-
-const onContextMenuClick = (args) => {
-    const scheduleObj = document.querySelector('.e-schedule').ej2_instances[0];
-
-    // get event details from clicked event element
-    const eventObj = scheduleObj.getEventDetails(args.element);
-
-    switch (args.item.id) {
-        case 'open':
-            scheduleObj.openEditor(eventObj, "Save");
-            break;
-
-        case 'delete':
-            scheduleObj.deleteEvent(eventObj.Id);
-            break;
-
-        case 'customAction':
-            alert("Custom Action clicked on event: " + eventObj.Subject);
-            break;
-
-        default:
-            break;
-    }
-};
-
-function editorTemplate(props) {
-    console.log("editorTemplate props -> ", props);
-    return (<AddEventPopup />);
-}
 
 function Scheduler() {
     const [showPopup, setShowPopup] = useState(false);
     const [open, setOpen] = useState(false);
     const onPopupOpen = (args) => {
         // Cancel default editor
-        if(args.type === "QuickInfo") {
+        if (args.type === "QuickInfo") {
             // args.cancel = true;
         }
         console.log("onPopupOpen args -> ", args);
@@ -298,7 +260,7 @@ function Scheduler() {
     return (
         <>
             <ScheduleComponent
-            //    editorTemplate={newPopupOpen}
+                //    editorTemplate={newPopupOpen}
                 // editorTemplate={editorTemplate}
                 popupOpen={onPopupOpen}
                 // editorTemplate={AddEventPopup}
@@ -307,7 +269,7 @@ function Scheduler() {
                 // popupOpen={disableDefaultEditor}
                 width="100%"
                 height="550px"
-                renderCell={DataFetch}
+
                 rowAutoHeight={true}
                 eventClick={EventClicked}
                 eventSettings={{ dataSource: appointmentData }}
@@ -324,7 +286,7 @@ function Scheduler() {
                         option: "TimelineWorkWeek",
                         interval: 4,
                         showWeekend: false,
-                    
+
                         startHour: "08:00",
                         endHour: "14:00",
                         timeScale: {
@@ -334,14 +296,14 @@ function Scheduler() {
                         }
 
                     },
-                     { option: "TimelineMonth", showWeekend: false }
+                    { option: "TimelineMonth", showWeekend: false }
 
                 ]}
                 currentView="TimelineMonth"
                 allowDragAndDrop={true}
                 allowResizing={true}
                 //  cellTemplate={<CellTempleteOne></CellTempleteOne>}
-                 hideWeekendDays={true} 
+                renderCell={CellTempleteOne}
 
 
             >
@@ -373,24 +335,7 @@ function Scheduler() {
 
                     </ResourceDirective>
                 </ResourcesDirective>
-
-
-
-
-
-
-
-
-
-
-
-
                 <Inject services={[Day, Week, WorkWeek, Month, Agenda, TimelineViews, TimelineMonth, DragAndDrop, Resize]} />
-
-
-
-
-
 
             </ScheduleComponent>
         </>

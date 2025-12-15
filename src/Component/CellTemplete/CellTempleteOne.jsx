@@ -1,11 +1,14 @@
-import React from 'react';
+    const CellTempleteOne = (args) => {
+        if (args.elementType === 'workCells' || args.elementType === 'monthCells') {
+            const date = args.date;
+            const day = date.getDay(); // 0 = Sunday, 6 = Saturday
+           console.log(`date = ${date} day= ${day}`)
+            if (day ==5) {
+              
+                args.element.style.backgroundColor = '#a40000';
+                // args.element.style.color = '';
+            }
+        }
+    };
 
-const CellTempleteOne = (props) => {
-    let date = props.date
-    if (date.getDay() === 0 || date.getDay() === 6) {
-        return <div className="e-cell-content weekend-cell"></div>;
-    }
-    return <div className="e-cell-content"></div>;
-};
-
-export default CellTempleteOne;
+    export default CellTempleteOne
