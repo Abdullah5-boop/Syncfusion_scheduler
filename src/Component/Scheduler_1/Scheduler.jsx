@@ -6,6 +6,7 @@ import {
 } from '@syncfusion/ej2-react-schedule';
 import { useState } from 'react';
 import AddEventPopup from '../Popup/AddEventPopup';
+import CellTempleteOne from '../CellTemplete/CellTempleteOne';
 // import { BeforeOpenCloseMenuEventArgs, MenuEventArgs, MenuItemModel, ContextMenuComponent } from '@syncfusion/ej2-react-navigations';
 
 const special = [
@@ -50,8 +51,8 @@ const appointmentData = [
     {
         Id: 1,
         Subject: 'Abdullah',
-        StartTime: new Date(2025, 11, 11, 9, 0),
-        EndTime: new Date(2025, 11, 11, 11, 0),
+        StartTime: new Date(2025, 11, 15, 9, 0),
+        EndTime: new Date(2025, 11, 17, 11, 0),
         ResourceId: 2, //room  { Name: "B-2", Id: 4, Color: "#77f807ff", GroupId: 2 },
         GroupId: 4 //a2
     },
@@ -70,7 +71,7 @@ const appointmentData = [
         Id: 3,
         Subject: 'Tech Demo',
         StartTime: new Date(2025, 11, 20, 11, 0),
-        EndTime: new Date(2025, 11, 24, 12, 0),
+        EndTime: new Date(2025, 11, 21, 12, 0),
         ResourceId: 3,
         GroupId: 2
     },
@@ -85,11 +86,7 @@ const EventClicked = (arg) => {
     console.log("Event clike line 105 -> ", arg);
 }
 
-const disableDefaultEditor = (args) => {
 
-    console.log("disableDefaultEditor fired ");
-
-};
 
 
 
@@ -277,27 +274,33 @@ const onContextMenuClick = (args) => {
     }
 };
 
+function editorTemplate(props) {
+    console.log("editorTemplate props -> ", props);
+    return (<AddEventPopup />);
+}
 
-
-console.log("_".repeat(50));
 function Scheduler() {
     const [showPopup, setShowPopup] = useState(false);
     const [open, setOpen] = useState(false);
-
-    const openCustomPopup = (args) => {
-        // setEventData(data);
-        // args.cancel = true;
-
-        // setShowPopup(true);
-
-        // console.log("openCustomPopup data -> ", data);
-
+    const onPopupOpen = (args) => {
+        // Cancel default editor
+        if(args.type === "QuickInfo") {
+            // args.cancel = true;
+        }
+        console.log("onPopupOpen args -> ", args);
     };
+    const newPopupOpen = (args) => {
+        return (<AddEventPopup args={args}></AddEventPopup>)
+
+    }
+
     console.log("Scheduler component rendered ", showPopup);
     return (
         <>
             <ScheduleComponent
-                // popupOpen={openCustomPopup}
+            //    editorTemplate={newPopupOpen}
+                // editorTemplate={editorTemplate}
+                popupOpen={onPopupOpen}
                 // editorTemplate={AddEventPopup}
                 cssClass='schedule-cell-dimension'
                 actionBegin={onActionBegin}
@@ -320,8 +323,8 @@ function Scheduler() {
                     {
                         option: "TimelineWorkWeek",
                         interval: 4,
-                        showWeekend: true,
-                        workDays: [0, 1, 2, 3, 4, 6],
+                        showWeekend: false,
+                    
                         startHour: "08:00",
                         endHour: "14:00",
                         timeScale: {
@@ -331,13 +334,14 @@ function Scheduler() {
                         }
 
                     },
-                    { option: "TimelineMonth" }
+                     { option: "TimelineMonth", showWeekend: false }
 
                 ]}
                 currentView="TimelineMonth"
                 allowDragAndDrop={true}
                 allowResizing={true}
-
+                //  cellTemplate={<CellTempleteOne></CellTempleteOne>}
+                 hideWeekendDays={true} 
 
 
             >
