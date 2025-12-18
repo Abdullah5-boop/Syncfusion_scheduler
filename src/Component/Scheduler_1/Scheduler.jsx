@@ -7,22 +7,22 @@ import {
 import { useState } from 'react';
 import AddEventPopup from '../Popup/AddEventPopup';
 import CellTempleteOne from '../CellTemplete/CellTempleteOne';
-// import onActionBegin from '../Other/OnActionBegin';
+import { appointmentDatas ,  appointmentData} from '../Other/MakeAppointment';
 // import { BeforeOpenCloseMenuEventArgs, MenuEventArgs, MenuItemModel, ContextMenuComponent } from '@syncfusion/ej2-react-navigations';
 
 const special = [
     {
-        date: new Date(2025, 11, 16), // Dec 16, 2025
-        startTime: new Date(2025, 11, 16, 8, 0),
-        endTime: new Date(2025, 11, 16, 10, 0),
+        date: new Date(2026, 11, 16), // Dec 16, 2025
+        startTime: new Date(2026, 11, 16, 8, 0),
+        endTime: new Date(2026, 11, 16, 10, 0),
         isWorking: true,
         text: 'Public Holiday',
         cssClass: 'dec-16-holiday-cell'
     },
     {
-        date: new Date(2025, 11, 20), // Dec 16, 2025
-        startTime: new Date(2025, 11, 20, 8, 0),
-        endTime: new Date(2025, 11, 20, 12, 0),
+        date: new Date(2026, 11, 20), // Dec 16, 2025
+        startTime: new Date(2026, 11, 20, 8, 0),
+        endTime: new Date(2026, 11, 20, 12, 0),
         isWorking: true,
         text: 'nothing ',
         cssClass: 'dec-16-holiday-cell'
@@ -47,38 +47,49 @@ let resourceDataSourceFirstLayer = [
     { Name: "B-5", Id: 7, Color: "#c3116aff", GroupId: 4 }
 ];
 
-const appointmentData = [
-    // Multi-day event (Dec 17–19)
-    {
-        Id: 1,
-        Subject: 'Abdullah',
-        StartTime: new Date(2025, 11, 15, 9, 0),
-        EndTime: new Date(2025, 11, 17, 11, 0),
-        ResourceId: 2, //room  { Name: "B-2", Id: 4, Color: "#77f807ff", GroupId: 2 },
-        GroupId: 4 //a2
-    },
-
-    // Single-day meetings (Dec 20)
-    {
-        Id: 2,
-        Subject: 'Client Interview (Internal)',
-        StartTime: new Date(2025, 11, 18, 10, 0),
-        EndTime: new Date(2025, 11, 19, 13, 0),
-        ResourceId: 2,
-        GroupId: 3
-    },
-
-    {
-        Id: 3,
-        Subject: 'Tech Demo',
-        StartTime: new Date(2025, 11, 20, 11, 0),
-        EndTime: new Date(2025, 11, 21, 12, 0),
-        ResourceId: 3,
-        GroupId: 2
-    },
 
 
-];
+// const appointmentData = [
+//     // Multi-day event (Dec 17–19)
+//     {
+//         Id: 1,
+//         Subject: 'Abdullah',
+//         StartTime: new Date(2025, 11, 15, 9, 0),
+//         EndTime: new Date(2025, 11, 17, 11, 0),
+//         ResourceId: 2, //room  { Name: "B-2", Id: 4, Color: "#77f807ff", GroupId: 2 },
+//         GroupId: 4 //a2
+//     },
+
+//     // Single-day meetings (Dec 20)
+//     {
+//         Id: 2,
+//         Subject: 'Client Interview (Internal)',
+//         StartTime: new Date(2025, 11, 18, 10, 0),
+//         EndTime: new Date(2025, 11, 19, 13, 0),
+//         ResourceId: 2,
+//         GroupId: 3
+//     },
+
+//     {
+//         Id: 3,
+//         Subject: 'Tech Demo',
+//         StartTime: new Date(2025, 11, 20, 11, 0),
+//         EndTime: new Date(2025, 11, 21, 12, 0),
+//         ResourceId: 3,
+//         GroupId: 2
+//     },
+
+
+// ];
+
+
+
+
+
+
+
+
+
 // 
 const DataFetch = (arg) => {
 
