@@ -1,7 +1,8 @@
     const CellTempleteOne = (args) => {
         if (args.elementType === 'workCells' || args.elementType === 'monthCells') {
             const date = args.date;
-            const day = date.getDay(); // 0 = Sunday, 6 = Saturday
+            const day = date.getDay(); 
+            // 0 = Sunday, 6 = Saturday
         //    console.log(`date = ${date} day= ${day}`)
             if (day ==5) {
               

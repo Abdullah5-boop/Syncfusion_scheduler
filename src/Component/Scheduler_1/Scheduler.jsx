@@ -235,6 +235,7 @@ const onActionBegin = (args) => {
             newTitle.style.fontWeight = "bold";
             if (comp) {
                 args.cancel = true;
+                alert("this date is already booked")
                 comp.appendChild(newTitle);
 
             }
