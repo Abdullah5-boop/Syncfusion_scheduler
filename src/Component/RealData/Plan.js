@@ -1,4 +1,4 @@
-let planData = [
+let PlanData = [
         {
             "plan_id": 2003,
             "IS_PRODUCTION": false,
@@ -40769,5 +40769,19 @@ let planData = [
 
 
 
-// module.exports = planData
-export default planData
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export default PlanData
+

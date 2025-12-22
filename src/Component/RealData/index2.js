@@ -11,6 +11,23 @@ import modifyStratAndEndTime from "./compayredesign.js";
 import companyInfoList from "./company.js";
 
 
+
+
+// let PlanData = []
+// fetch(`http://localhost:3000/plan`)
+//     .then(res => res.json())
+//     .then(data => { PlanData = data; console.log(data) })
+//     .catch(err=> console.log(err))
+
+
+
+// console.log("_".repeat(50))
+// console.log(PlanData)
+// console.log("_".repeat(50))
+
+
+
+
 const colors = [
   "#1abc9c", "#8e44ad", "#2ecc71", "#27ae60", "#3498db",
   "#2980b9", "#9b59b6", "#ff7675", "#34495e", "#2c3e50",
@@ -57,7 +74,8 @@ let children = Linedata.map((line, index) => {
     Id: index + 1,
     Name: line.LINE_NAME,
     GroupId: parent.Id,
-    line_id: line.LINE_ID
+    line_id: line.LINE_ID,
+    ...line
   }
 })
 
@@ -75,7 +93,7 @@ console.log(layer_one);
 
 console.log("_".repeat(50), "\n", "Child layer", "\n")
 console.log(children)
-
+console.log("_".repeat(50))
 
 
 
@@ -127,12 +145,15 @@ appointment.forEach(app => {
   if (!child) return;
 
   temps.push({
-    Id: app.plan_id,
+    plan_Id: app.plan_id,
+    line_id : child.line_id,
     Subject: app.subject,
     StartTime: app.startTime,   // ✅ already Date
     EndTime: app.endTime,       // ✅ already Date
     ResourceId: child.GroupId,  // floor
-    GroupId: child.Id           // line
+    GroupId: child.Id,         // line
+    PLAN_ID: app.plan_id
+
   });
 });
 
@@ -141,7 +162,7 @@ appointment.forEach(app => {
 let temps2 = [temps[0]]
 
 
-export default { layer_one, children, temps2,temps }
+export default { layer_one, children, temps2, temps }
 
 
 
