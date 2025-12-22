@@ -4,23 +4,27 @@ import {
     Inject, ResourcesDirective, ResourceDirective,
     TimelineViews, TimelineMonth, DragAndDrop, Resize
 } from '@syncfusion/ej2-react-schedule';
-import { useState } from 'react';
+import processSchedulerData from '../RealData/index2Copy';
+import maindata from "../RealData/index2"
+import { useEffect, useState } from 'react';
 import AddEventPopup from '../Popup/AddEventPopup';
+import CellTempleteOne from '../CellTemplete/CellTempleteOne';
+import { appointmentDatas, appointmentData } from '../Other/MakeAppointment';
 // import { BeforeOpenCloseMenuEventArgs, MenuEventArgs, MenuItemModel, ContextMenuComponent } from '@syncfusion/ej2-react-navigations';
 
 const special = [
     {
-        date: new Date(2025, 11, 16), // Dec 16, 2025
-        startTime: new Date(2025, 11, 16, 8, 0),
-        endTime: new Date(2025, 11, 16, 10, 0),
+        date: new Date(2026, 11, 16), // Dec 16, 2025
+        startTime: new Date(2026, 11, 16, 8, 0),
+        endTime: new Date(2026, 11, 16, 10, 0),
         isWorking: true,
         text: 'Public Holiday',
         cssClass: 'dec-16-holiday-cell'
     },
     {
-        date: new Date(2025, 11, 20), // Dec 16, 2025
-        startTime: new Date(2025, 11, 20, 8, 0),
-        endTime: new Date(2025, 11, 20, 12, 0),
+        date: new Date(2026, 11, 20), // Dec 16, 2025
+        startTime: new Date(2026, 11, 20, 8, 0),
+        endTime: new Date(2026, 11, 20, 12, 0),
         isWorking: true,
         text: 'nothing ',
         cssClass: 'dec-16-holiday-cell'
@@ -45,38 +49,10 @@ let resourceDataSourceFirstLayer = [
     { Name: "B-5", Id: 7, Color: "#c3116aff", GroupId: 4 }
 ];
 
-const appointmentData = [
-    // Multi-day event (Dec 17–19)
-    {
-        Id: 1,
-        Subject: 'Abdullah',
-        StartTime: new Date(2025, 11, 11, 9, 0),
-        EndTime: new Date(2025, 11, 11, 11, 0),
-        ResourceId: 2, //room  { Name: "B-2", Id: 4, Color: "#77f807ff", GroupId: 2 },
-        GroupId: 4 //a2
-    },
-
-    // Single-day meetings (Dec 20)
-    {
-        Id: 2,
-        Subject: 'Client Interview (Internal)',
-        StartTime: new Date(2025, 11, 18, 10, 0),
-        EndTime: new Date(2025, 11, 19, 13, 0),
-        ResourceId: 2,
-        GroupId: 3
-    },
-
-    {
-        Id: 3,
-        Subject: 'Tech Demo',
-        StartTime: new Date(2025, 11, 20, 11, 0),
-        EndTime: new Date(2025, 11, 24, 12, 0),
-        ResourceId: 3,
-        GroupId: 2
-    },
 
 
-];
+
+
 // 
 const DataFetch = (arg) => {
 
@@ -85,16 +61,10 @@ const EventClicked = (arg) => {
     console.log("Event clike line 105 -> ", arg);
 }
 
-const disableDefaultEditor = (args) => {
-
-    console.log("disableDefaultEditor fired ");
-
-};
-
-
 
 
 const onActionBegin = (args) => {
+
     let specialDayConfictState = false;
     if (args.requestType === "eventCreate" || args.requestType === "eventChange") {
         const eventData = Array.isArray(args.data) ? args.data[0] : args.data;
@@ -141,69 +111,69 @@ const onActionBegin = (args) => {
             if (form) form.appendChild(errorMsg);
             // return errorMsg;
         }
-        function isWithinWorkingHours() {
+        // function isWithinWorkingHours() {
 
-            special.forEach(s => {
-                let dateCheck = isSameDay(es, s.date);
-                console.log("dateCheck -> ", dateCheck);
+        special.forEach(s => {
+            let dateCheck = isSameDay(es, s.date);
+            console.log("dateCheck -> ", dateCheck);
 
-                if (dateCheck == "dateMatchDone") {
-                    if (
-                        es.getTime() >= s.startTime.getTime() &&
-                        ee.getTime() <= s.endTime.getTime()
-                    ) {
+            if (dateCheck == "dateMatchDone") {
+                if (
+                    es.getTime() >= s.startTime.getTime() &&
+                    ee.getTime() <= s.endTime.getTime()
+                ) {
 
-                        console.log("date and time match ");
-                        return "dateAndTimeMatch";
-                    } else {
-                        args.cancel = true;
-                        specialNotification("e-title-text")
-                        console.log("date match but time not match ");
-                        confirm("Scheduling conflict with special working hours!");
-                        return "DateMatchTimeNotMatch";
-
-                    }
+                    console.log("date and time match ");
+                    return "dateAndTimeMatch";
                 } else {
-                    console.log("date not match ");
-                    return "dateNotMatch";
+                    args.cancel = true;
+                    specialNotification("e-title-text")
+                    console.log("date match but time not match ");
+                    confirm("Scheduling conflict with special working hours!");
+                    return "DateMatchTimeNotMatch";
+
                 }
-            })
+            } else {
+                console.log("date not match ");
+                return "dateNotMatch";
+            }
+        })
 
 
 
-            // for (const s of special) {
-            //     let dateCheck = isSameDay(es, s.date);
-            //     if (dateCheck === "dateMatchDone") {
-            //         if (
-            //             es.getTime() >= s.startTime.getTime() &&
-            //             ee.getTime() <= s.endTime.getTime()
-            //         ) 
-            //         { return "dateAndTimeMatch";
+        // for (const s of special) {
+        //     let dateCheck = isSameDay(es, s.date);
+        //     if (dateCheck === "dateMatchDone") {
+        //         if (
+        //             es.getTime() >= s.startTime.getTime() &&
+        //             ee.getTime() <= s.endTime.getTime()
+        //         ) 
+        //         { return "dateAndTimeMatch";
 
-            //          }
-            //         else {
-            //             return "DatetimeNotMatch";
-            //         }
-            //     }
-            //     else return "dateNotMatch";
-
-
-            //     // if (isSameDay(es, s.date)) {
-            //     //     if (
-            //     //         es.getTime() >= s.startTime.getTime() &&
-            //     //         ee.getTime() <= s.endTime.getTime()
-            //     //     ) { return true; }
-            //     //     else return false;
-            //     // }
-            //     // else return false;
+        //          }
+        //         else {
+        //             return "DatetimeNotMatch";
+        //         }
+        //     }
+        //     else return "dateNotMatch";
 
 
-            // }
-            // return "loop does not work";
-        }
+        //     // if (isSameDay(es, s.date)) {
+        //     //     if (
+        //     //         es.getTime() >= s.startTime.getTime() &&
+        //     //         ee.getTime() <= s.endTime.getTime()
+        //     //     ) { return true; }
+        //     //     else return false;
+        //     // }
+        //     // else return false;
 
-        console.log("_".repeat(20), "\n", "map function");
-        console.log(special.map(s => isSameDay(s.startTime, es)));
+
+        // }
+        // return "loop does not work";
+        // }
+
+        // console.log("_".repeat(20), "\n", "map function");
+        // console.log(special.map(s => isSameDay(s.startTime, es)));
 
         // let dateStatus = isWithinWorkingHours();
         // console.log("*_".repeat(20), "\n");
@@ -212,9 +182,9 @@ const onActionBegin = (args) => {
         console.log("_".repeat(20), "\n");
 
 
-        console.log("_".repeat(20), "\n", "foreach function");
-        console.log(isWithinWorkingHours());
-        console.log("_".repeat(20), "\n");
+        //console.log("_".repeat(20), "\n", "foreach function");
+        //console.log(isWithinWorkingHours());
+        //console.log("_".repeat(20), "\n");
 
 
 
@@ -229,6 +199,7 @@ const onActionBegin = (args) => {
             newTitle.style.fontWeight = "bold";
             if (comp) {
                 args.cancel = true;
+                alert("this date is already booked")
                 comp.appendChild(newTitle);
 
             }
@@ -244,151 +215,237 @@ const onActionBegin = (args) => {
 };
 
 
-const onContextMenuOpen = (args) => {
-    // Only show menu when right-clicking an event
-    if (!args.element || !args.element.classList.contains("e-appointment")) {
-        args.cancel = true;
-    }
-};
 
 
-
-const onContextMenuClick = (args) => {
-    const scheduleObj = document.querySelector('.e-schedule').ej2_instances[0];
-
-    // get event details from clicked event element
-    const eventObj = scheduleObj.getEventDetails(args.element);
-
-    switch (args.item.id) {
-        case 'open':
-            scheduleObj.openEditor(eventObj, "Save");
-            break;
-
-        case 'delete':
-            scheduleObj.deleteEvent(eventObj.Id);
-            break;
-
-        case 'customAction':
-            alert("Custom Action clicked on event: " + eventObj.Subject);
-            break;
-
-        default:
-            break;
-    }
-};
-
-
-
-console.log("_".repeat(50));
 function Scheduler() {
     const [showPopup, setShowPopup] = useState(false);
     const [open, setOpen] = useState(false);
+    const [plan, setplan] = useState([])
+    const [company, setcompany] = useState([])
+    const [line, setLine] = useState([])
+    // let [maindata, setmaindata] = useState({})
 
-    const openCustomPopup = (args) => {
-        // setEventData(data);
-        // args.cancel = true;
 
-        // setShowPopup(true);
 
-        // console.log("openCustomPopup data -> ", data);
 
+
+    // useEffect(() => {
+    //     // Fetch all three APIs in parallel
+    //     Promise.all([
+    //         fetch("http://localhost:3000/plan").then(res => res.json()),
+    //         fetch("http://localhost:3000/company").then(res => res.json()),
+    //         fetch("http://localhost:3000/line").then(res => res.json())
+    //     ])
+    //         .then(([planData, companyData, lineData]) => {
+    //             setplan(planData);
+    //             setcompany(companyData);
+    //             setLine(lineData);
+
+    //             // Now that all data is loaded, process it
+    //             const processed = processSchedulerData({
+    //                 PlanData: planData,
+    //                 Linedata: lineData,
+    //                 companyInfoList: companyData
+    //             });
+    //             setmaindata(processed)
+    //             // console.log(processed);
+    //         })
+    //         .catch(err => console.error("Error fetching data:", err));
+    // }, []);
+
+
+
+
+
+    const onPopupOpen = (args) => {
+        // Cancel default editor
+        if (args.type === "QuickInfo") {
+            args.cancel = true;
+        }
+        console.log("onPopupOpen args -> ", args);
     };
+    const newPopupOpen = (args) => {
+        return (<AddEventPopup args={args}></AddEventPopup>)
+
+    }
+
     console.log("Scheduler component rendered ", showPopup);
     return (
         <>
-            <ScheduleComponent
-                // popupOpen={openCustomPopup}
-                // editorTemplate={AddEventPopup}
-                cssClass='schedule-cell-dimension'
-                actionBegin={onActionBegin}
-                // popupOpen={disableDefaultEditor}
-                width="100%"
-                height="550px"
-                renderCell={DataFetch}
-                rowAutoHeight={true}
-                eventClick={EventClicked}
-                eventSettings={{ dataSource: appointmentData }}
-                group={{ resources: ['Resources', 'Group'] }}
-                views={[
-                    "Day",
-                    "Week",
-                    "WorkWeek",
-                    "Month",
-                    "Agenda",
-                    { option: "TimelineDay" },
-                    { option: "TimelineWeek" },
-                    {
-                        option: "TimelineWorkWeek",
-                        interval: 4,
-                        showWeekend: true,
-                        workDays: [0, 1, 2, 3, 4, 6],
-                        startHour: "08:00",
-                        endHour: "14:00",
-                        timeScale: {
-                            enable: true,
-                            interval: 140,
-                            slotCount: 3,
-                        }
+            {/* {
+                maindata &&
 
-                    },
-                    { option: "TimelineMonth" }
+                <ScheduleComponent
+                    //    editorTemplate={newPopupOpen}
+                    editorTemplate={AddEventPopup}
+                    // editorTemplate={editorTemplate}
+                    popupOpen={onPopupOpen}
 
-                ]}
-                currentView="TimelineMonth"
-                allowDragAndDrop={true}
-                allowResizing={true}
+                    cssClass='schedule-cell-dimension'
+                    actionBegin={onActionBegin}
+                    // popupOpen={disableDefaultEditor}
+                    width="100%"
+                    height="550px"
 
+                    rowAutoHeight={true}
+                    eventClick={EventClicked}
+                    eventSettings={{ dataSource: maindata.temps }}
+                    // eventSettings={{ dataSource: appointmentData }}
+                    group={{ resources: ['Resources', 'Group'] }}
+                    views={[
+                        "Day",
+                        "Week",
+                        "WorkWeek",
+                        "Month",
+                        "Agenda",
+                        { option: "TimelineDay" },
+                        { option: "TimelineWeek" },
+                        {
+                            option: "TimelineWorkWeek",
+                            interval: 4,
+                            // showWeekend: false,
 
+                            startHour: "08:00",
+                            endHour: "14:00",
+                            timeScale: {
+                                enable: true,
+                                interval: 140,
+                                slotCount: 3,
+                            }
 
-            >
-                <ResourcesDirective >
-                    <ResourceDirective
+                        },
+                        { option: "TimelineMonth", interval: 3 }
 
-                        field="ResourceId"        // <-- MUST match appointmentData field
-                        title="Rooms / Labs"
-                        name="Resources"          // <-- used internally for binding
-                        allowMultiple={true}
-                        dataSource={resourceDataSourceSecondLayer}
-                        textField="Name"          // <-- must match resourceDataSource keys
-                        idField="Id"
-                        colorField="Color"
-                    />
+                    ]}
+                    currentView="TimelineMonth"
+                    allowDragAndDrop={true}
+                    allowResizing={true}
+                    //  cellTemplate={<CellTempleteOne></CellTempleteOne>}
+                    renderCell={CellTempleteOne}
 
 
-                    <ResourceDirective
-                        textField='Name'
-                        idField='Id'
-                        colorField='Color'
-                        groupIDField='GroupId'
-                        allowMultiple={true}
-                        field='GroupId'
-                        name='Group'
-                        title='Group Title'
-                        dataSource={resourceDataSourceFirstLayer}
-                    >
-
-                    </ResourceDirective>
-                </ResourcesDirective>
+                >
+                    <ResourcesDirective >
+                        <ResourceDirective
+                            field="ResourceId"
+                            name="Resources"
+                            dataSource={maindata.layer_one}
+                            textField="Name"
+                            idField="Id"
+                            colorField="Color"
 
 
+                        // dataSource={resourceDataSourceSecondLayer}
+
+                        />
 
 
+                        <ResourceDirective
+                            textField='Name'
+                            idField='Id'
+                            colorField='Color'
+                            groupIDField='GroupId'
+                            allowMultiple={true}
+                            field='GroupId'
+                            name='Group'
+                            title='Group Title'
+                            dataSource={maindata.children}
+                        // dataSource={resourceDataSourceFirstLayer}
+                        >
+
+                        </ResourceDirective>
+                    </ResourcesDirective>
+                    <Inject services={[Day, Week, WorkWeek, Month, Agenda, TimelineViews, TimelineMonth, DragAndDrop, Resize]} />
+
+                </ScheduleComponent>
+            } */}
+            
+
+                <ScheduleComponent
+                    //    editorTemplate={newPopupOpen}
+                    editorTemplate={AddEventPopup}
+                    // editorTemplate={editorTemplate}
+                    popupOpen={onPopupOpen}
+
+                    cssClass='schedule-cell-dimension'
+                    actionBegin={onActionBegin}
+                    // popupOpen={disableDefaultEditor}
+                    width="100%"
+                    height="550px"
+
+                    rowAutoHeight={true}
+                    eventClick={EventClicked}
+                    eventSettings={{ dataSource: maindata.temps }}
+                    // eventSettings={{ dataSource: appointmentData }}
+                    group={{ resources: ['Resources', 'Group'] }}
+                    views={[
+                        "Day",
+                        "Week",
+                        "WorkWeek",
+                        "Month",
+                        "Agenda",
+                        { option: "TimelineDay" },
+                        { option: "TimelineWeek" },
+                        {
+                            option: "TimelineWorkWeek",
+                            interval: 4,
+                            // showWeekend: false,
+
+                            startHour: "08:00",
+                            endHour: "14:00",
+                            timeScale: {
+                                enable: true,
+                                interval: 140,
+                                slotCount: 3,
+                            }
+
+                        },
+                        { option: "TimelineMonth", interval: 3 }
+
+                    ]}
+                    currentView="TimelineMonth"
+                    allowDragAndDrop={true}
+                    allowResizing={true}
+                    //  cellTemplate={<CellTempleteOne></CellTempleteOne>}
+                    renderCell={CellTempleteOne}
 
 
+                >
+                    <ResourcesDirective >
+                        <ResourceDirective
+                            field="ResourceId"
+                            name="Resources"
+                            dataSource={maindata.layer_one}
+                            textField="Name"
+                            idField="Id"
+                            colorField="Color"
 
 
+                        // dataSource={resourceDataSourceSecondLayer}
+
+                        />
 
 
+                        <ResourceDirective
+                            textField='Name'
+                            idField='Id'
+                            colorField='Color'
+                            groupIDField='GroupId'
+                            allowMultiple={true}
+                            field='GroupId'
+                            name='Group'
+                            title='Group Title'
+                            dataSource={maindata.children}
+                        // dataSource={resourceDataSourceFirstLayer}
+                        >
 
+                        </ResourceDirective>
+                    </ResourcesDirective>
+                    <Inject services={[Day, Week, WorkWeek, Month, Agenda, TimelineViews, TimelineMonth, DragAndDrop, Resize]} />
 
-                <Inject services={[Day, Week, WorkWeek, Month, Agenda, TimelineViews, TimelineMonth, DragAndDrop, Resize]} />
+                </ScheduleComponent>
+            
 
-
-
-
-
-
-            </ScheduleComponent>
         </>
     );
 }
