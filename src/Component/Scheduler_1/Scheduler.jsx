@@ -4,10 +4,11 @@ import {
     Inject, ResourcesDirective, ResourceDirective,
     TimelineViews, TimelineMonth, DragAndDrop, Resize
 } from '@syncfusion/ej2-react-schedule';
+import maindata from "../RealData/index2"
 import { useState } from 'react';
 import AddEventPopup from '../Popup/AddEventPopup';
 import CellTempleteOne from '../CellTemplete/CellTempleteOne';
-import { appointmentDatas ,  appointmentData} from '../Other/MakeAppointment';
+import { appointmentDatas, appointmentData } from '../Other/MakeAppointment';
 // import { BeforeOpenCloseMenuEventArgs, MenuEventArgs, MenuItemModel, ContextMenuComponent } from '@syncfusion/ej2-react-navigations';
 
 const special = [
@@ -83,7 +84,7 @@ let resourceDataSourceFirstLayer = [
 // ];
 
 
-
+console.log(maindata)
 
 
 
@@ -101,6 +102,7 @@ const EventClicked = (arg) => {
 
 
 const onActionBegin = (args) => {
+    
     let specialDayConfictState = false;
     if (args.requestType === "eventCreate" || args.requestType === "eventChange") {
         const eventData = Array.isArray(args.data) ? args.data[0] : args.data;
@@ -147,69 +149,69 @@ const onActionBegin = (args) => {
             if (form) form.appendChild(errorMsg);
             // return errorMsg;
         }
-        function isWithinWorkingHours() {
+        // function isWithinWorkingHours() {
 
-            special.forEach(s => {
-                let dateCheck = isSameDay(es, s.date);
-                console.log("dateCheck -> ", dateCheck);
+        special.forEach(s => {
+            let dateCheck = isSameDay(es, s.date);
+            console.log("dateCheck -> ", dateCheck);
 
-                if (dateCheck == "dateMatchDone") {
-                    if (
-                        es.getTime() >= s.startTime.getTime() &&
-                        ee.getTime() <= s.endTime.getTime()
-                    ) {
+            if (dateCheck == "dateMatchDone") {
+                if (
+                    es.getTime() >= s.startTime.getTime() &&
+                    ee.getTime() <= s.endTime.getTime()
+                ) {
 
-                        console.log("date and time match ");
-                        return "dateAndTimeMatch";
-                    } else {
-                        args.cancel = true;
-                        specialNotification("e-title-text")
-                        console.log("date match but time not match ");
-                        confirm("Scheduling conflict with special working hours!");
-                        return "DateMatchTimeNotMatch";
-
-                    }
+                    console.log("date and time match ");
+                    return "dateAndTimeMatch";
                 } else {
-                    console.log("date not match ");
-                    return "dateNotMatch";
+                    args.cancel = true;
+                    specialNotification("e-title-text")
+                    console.log("date match but time not match ");
+                    confirm("Scheduling conflict with special working hours!");
+                    return "DateMatchTimeNotMatch";
+
                 }
-            })
+            } else {
+                console.log("date not match ");
+                return "dateNotMatch";
+            }
+        })
 
 
 
-            // for (const s of special) {
-            //     let dateCheck = isSameDay(es, s.date);
-            //     if (dateCheck === "dateMatchDone") {
-            //         if (
-            //             es.getTime() >= s.startTime.getTime() &&
-            //             ee.getTime() <= s.endTime.getTime()
-            //         ) 
-            //         { return "dateAndTimeMatch";
+        // for (const s of special) {
+        //     let dateCheck = isSameDay(es, s.date);
+        //     if (dateCheck === "dateMatchDone") {
+        //         if (
+        //             es.getTime() >= s.startTime.getTime() &&
+        //             ee.getTime() <= s.endTime.getTime()
+        //         ) 
+        //         { return "dateAndTimeMatch";
 
-            //          }
-            //         else {
-            //             return "DatetimeNotMatch";
-            //         }
-            //     }
-            //     else return "dateNotMatch";
-
-
-            //     // if (isSameDay(es, s.date)) {
-            //     //     if (
-            //     //         es.getTime() >= s.startTime.getTime() &&
-            //     //         ee.getTime() <= s.endTime.getTime()
-            //     //     ) { return true; }
-            //     //     else return false;
-            //     // }
-            //     // else return false;
+        //          }
+        //         else {
+        //             return "DatetimeNotMatch";
+        //         }
+        //     }
+        //     else return "dateNotMatch";
 
 
-            // }
-            // return "loop does not work";
-        }
+        //     // if (isSameDay(es, s.date)) {
+        //     //     if (
+        //     //         es.getTime() >= s.startTime.getTime() &&
+        //     //         ee.getTime() <= s.endTime.getTime()
+        //     //     ) { return true; }
+        //     //     else return false;
+        //     // }
+        //     // else return false;
 
-        console.log("_".repeat(20), "\n", "map function");
-        console.log(special.map(s => isSameDay(s.startTime, es)));
+
+        // }
+        // return "loop does not work";
+        // }
+
+        // console.log("_".repeat(20), "\n", "map function");
+        // console.log(special.map(s => isSameDay(s.startTime, es)));
 
         // let dateStatus = isWithinWorkingHours();
         // console.log("*_".repeat(20), "\n");
@@ -218,9 +220,9 @@ const onActionBegin = (args) => {
         console.log("_".repeat(20), "\n");
 
 
-        console.log("_".repeat(20), "\n", "foreach function");
-        console.log(isWithinWorkingHours());
-        console.log("_".repeat(20), "\n");
+        //console.log("_".repeat(20), "\n", "foreach function");
+        //console.log(isWithinWorkingHours());
+        //console.log("_".repeat(20), "\n");
 
 
 
@@ -284,7 +286,8 @@ function Scheduler() {
 
                 rowAutoHeight={true}
                 eventClick={EventClicked}
-                eventSettings={{ dataSource: appointmentData }}
+                eventSettings={{ dataSource: maindata.temps }}
+                // eventSettings={{ dataSource: appointmentData }}
                 group={{ resources: ['Resources', 'Group'] }}
                 views={[
                     "Day",
@@ -297,7 +300,7 @@ function Scheduler() {
                     {
                         option: "TimelineWorkWeek",
                         interval: 4,
-                        showWeekend: false,
+                        // showWeekend: false,
 
                         startHour: "08:00",
                         endHour: "14:00",
@@ -308,7 +311,7 @@ function Scheduler() {
                         }
 
                     },
-                    { option: "TimelineMonth", showWeekend: false }
+                    { option: "TimelineMonth", interval:3 }
 
                 ]}
                 currentView="TimelineMonth"
@@ -321,15 +324,16 @@ function Scheduler() {
             >
                 <ResourcesDirective >
                     <ResourceDirective
-
-                        field="ResourceId"        // <-- MUST match appointmentData field
-                        title="Rooms / Labs"
-                        name="Resources"          // <-- used internally for binding
-                        allowMultiple={true}
-                        dataSource={resourceDataSourceSecondLayer}
-                        textField="Name"          // <-- must match resourceDataSource keys
+                        field="ResourceId"
+                        name="Resources"
+                        dataSource={maindata.layer_one}
+                        textField="Name"
                         idField="Id"
                         colorField="Color"
+
+
+                    // dataSource={resourceDataSourceSecondLayer}
+
                     />
 
 
@@ -342,7 +346,8 @@ function Scheduler() {
                         field='GroupId'
                         name='Group'
                         title='Group Title'
-                        dataSource={resourceDataSourceFirstLayer}
+                        dataSource={maindata.children}
+                    // dataSource={resourceDataSourceFirstLayer}
                     >
 
                     </ResourceDirective>
