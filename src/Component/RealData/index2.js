@@ -133,11 +133,6 @@ console.log("_".repeat(40))
 
 let temps = []
 
-// appointment.forEach(app => {
-//   let filters = children.find(child => app.line_id === child.line_id)
-//   if(filters) temps.push({...filters,...app, ResourceId : filters?.GroupId , GroupId: filters?.Id})
-
-// })
 
 
 appointment.forEach(app => {
