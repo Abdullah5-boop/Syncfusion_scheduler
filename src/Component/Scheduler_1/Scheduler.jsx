@@ -4,12 +4,13 @@ import {
     Inject, ResourcesDirective, ResourceDirective,
     TimelineViews, TimelineMonth, DragAndDrop, Resize
 } from '@syncfusion/ej2-react-schedule';
-import processSchedulerData from '../RealData/index2Copy';
-import maindata from "../RealData/index2"
-import { useEffect, useState } from 'react';
+// import maindata from "../RealData/index2"
+import { useState } from 'react';
 import AddEventPopup from '../Popup/AddEventPopup';
 import CellTempleteOne from '../CellTemplete/CellTempleteOne';
 import { appointmentDatas, appointmentData } from '../Other/MakeAppointment';
+import preparedData from "../RealData/indexAsync.js";
+import Loading from '../Popup/Loading.jsx';
 // import { BeforeOpenCloseMenuEventArgs, MenuEventArgs, MenuItemModel, ContextMenuComponent } from '@syncfusion/ej2-react-navigations';
 
 const special = [
@@ -48,6 +49,45 @@ let resourceDataSourceFirstLayer = [
     { Name: "B-4", Id: 6, Color: "#c3116aff", GroupId: 4 },
     { Name: "B-5", Id: 7, Color: "#c3116aff", GroupId: 4 }
 ];
+
+
+
+// const appointmentData = [
+//     // Multi-day event (Dec 17–19)
+//     {
+//         Id: 1,
+//         Subject: 'Abdullah',
+//         StartTime: new Date(2025, 11, 15, 9, 0),
+//         EndTime: new Date(2025, 11, 17, 11, 0),
+//         ResourceId: 2, //room  { Name: "B-2", Id: 4, Color: "#77f807ff", GroupId: 2 },
+//         GroupId: 4 //a2
+//     },
+
+//     // Single-day meetings (Dec 20)
+//     {
+//         Id: 2,
+//         Subject: 'Client Interview (Internal)',
+//         StartTime: new Date(2025, 11, 18, 10, 0),
+//         EndTime: new Date(2025, 11, 19, 13, 0),
+//         ResourceId: 2,
+//         GroupId: 3
+//     },
+
+//     {
+//         Id: 3,
+//         Subject: 'Tech Demo',
+//         StartTime: new Date(2025, 11, 20, 11, 0),
+//         EndTime: new Date(2025, 11, 21, 12, 0),
+//         ResourceId: 3,
+//         GroupId: 2
+//     },
+
+
+// ];
+
+
+// console.log(maindata)
+
 
 
 
@@ -220,47 +260,14 @@ const onActionBegin = (args) => {
 function Scheduler() {
     const [showPopup, setShowPopup] = useState(false);
     const [open, setOpen] = useState(false);
-    const [plan, setplan] = useState([])
-    const [company, setcompany] = useState([])
-    const [line, setLine] = useState([])
-    // let [maindata, setmaindata] = useState({})
-
-
-
-
-
-    // useEffect(() => {
-    //     // Fetch all three APIs in parallel
-    //     Promise.all([
-    //         fetch("http://localhost:3000/plan").then(res => res.json()),
-    //         fetch("http://localhost:3000/company").then(res => res.json()),
-    //         fetch("http://localhost:3000/line").then(res => res.json())
-    //     ])
-    //         .then(([planData, companyData, lineData]) => {
-    //             setplan(planData);
-    //             setcompany(companyData);
-    //             setLine(lineData);
-
-    //             // Now that all data is loaded, process it
-    //             const processed = processSchedulerData({
-    //                 PlanData: planData,
-    //                 Linedata: lineData,
-    //                 companyInfoList: companyData
-    //             });
-    //             setmaindata(processed)
-    //             // console.log(processed);
-    //         })
-    //         .catch(err => console.error("Error fetching data:", err));
-    // }, []);
-
-
-
-
-
+    let [parent, setParent] = useState([])
+    let [child, setChild] = useState([])
+    let [line, setLine] = useState([])
+    let [loading, setLoading] = useState(true)
     const onPopupOpen = (args) => {
         // Cancel default editor
         if (args.type === "QuickInfo") {
-            args.cancel = true;
+            // args.cancel = true;
         }
         console.log("onPopupOpen args -> ", args);
     };
@@ -269,18 +276,28 @@ function Scheduler() {
 
     }
 
+
+    async function useData() {
+        const data = await preparedData;
+        setParent(data.layer_one);
+        setChild(data.children);
+        setLine(data.temps);
+        setLoading(true)
+        // console.log(, data.children, data.temps);
+    }
+
+    useData();
     console.log("Scheduler component rendered ", showPopup);
     return (
         <>
-            {/* {
-                maindata &&
+            {loading ?
+
 
                 <ScheduleComponent
                     //    editorTemplate={newPopupOpen}
-                    editorTemplate={AddEventPopup}
                     // editorTemplate={editorTemplate}
                     popupOpen={onPopupOpen}
-
+                    // editorTemplate={AddEventPopup}
                     cssClass='schedule-cell-dimension'
                     actionBegin={onActionBegin}
                     // popupOpen={disableDefaultEditor}
@@ -289,7 +306,7 @@ function Scheduler() {
 
                     rowAutoHeight={true}
                     eventClick={EventClicked}
-                    eventSettings={{ dataSource: maindata.temps }}
+                    eventSettings={{ dataSource: line }}
                     // eventSettings={{ dataSource: appointmentData }}
                     group={{ resources: ['Resources', 'Group'] }}
                     views={[
@@ -329,7 +346,7 @@ function Scheduler() {
                         <ResourceDirective
                             field="ResourceId"
                             name="Resources"
-                            dataSource={maindata.layer_one}
+                            dataSource={parent}
                             textField="Name"
                             idField="Id"
                             colorField="Color"
@@ -349,7 +366,7 @@ function Scheduler() {
                             field='GroupId'
                             name='Group'
                             title='Group Title'
-                            dataSource={maindata.children}
+                            dataSource={child}
                         // dataSource={resourceDataSourceFirstLayer}
                         >
 
@@ -358,94 +375,98 @@ function Scheduler() {
                     <Inject services={[Day, Week, WorkWeek, Month, Agenda, TimelineViews, TimelineMonth, DragAndDrop, Resize]} />
 
                 </ScheduleComponent>
-            } */}
-            
+                :
+                <Loading></Loading>
 
-                <ScheduleComponent
-                    //    editorTemplate={newPopupOpen}
-                    editorTemplate={AddEventPopup}
-                    // editorTemplate={editorTemplate}
-                    popupOpen={onPopupOpen}
-
-                    cssClass='schedule-cell-dimension'
-                    actionBegin={onActionBegin}
-                    // popupOpen={disableDefaultEditor}
-                    width="100%"
-                    height="550px"
-
-                    rowAutoHeight={true}
-                    eventClick={EventClicked}
-                    eventSettings={{ dataSource: maindata.temps }}
-                    // eventSettings={{ dataSource: appointmentData }}
-                    group={{ resources: ['Resources', 'Group'] }}
-                    views={[
-                        "Day",
-                        "Week",
-                        "WorkWeek",
-                        "Month",
-                        "Agenda",
-                        { option: "TimelineDay" },
-                        { option: "TimelineWeek" },
-                        {
-                            option: "TimelineWorkWeek",
-                            interval: 4,
-                            // showWeekend: false,
-
-                            startHour: "08:00",
-                            endHour: "14:00",
-                            timeScale: {
-                                enable: true,
-                                interval: 140,
-                                slotCount: 3,
-                            }
-
-                        },
-                        { option: "TimelineMonth", interval: 3 }
-
-                    ]}
-                    currentView="TimelineMonth"
-                    allowDragAndDrop={true}
-                    allowResizing={true}
-                    //  cellTemplate={<CellTempleteOne></CellTempleteOne>}
-                    renderCell={CellTempleteOne}
+            }
 
 
-                >
-                    <ResourcesDirective >
-                        <ResourceDirective
-                            field="ResourceId"
-                            name="Resources"
-                            dataSource={maindata.layer_one}
-                            textField="Name"
-                            idField="Id"
-                            colorField="Color"
+            <Loading></Loading>
 
 
-                        // dataSource={resourceDataSourceSecondLayer}
 
-                        />
+            {/* <ScheduleComponent
+                //    editorTemplate={newPopupOpen}
+                // editorTemplate={editorTemplate}
+                popupOpen={onPopupOpen}
+                // editorTemplate={AddEventPopup}
+                cssClass='schedule-cell-dimension'
+                actionBegin={onActionBegin}
+                // popupOpen={disableDefaultEditor}
+                width="100%"
+                height="550px"
+
+                rowAutoHeight={true}
+                eventClick={EventClicked}
+                eventSettings={{ dataSource: maindata.temps }}
+                // eventSettings={{ dataSource: appointmentData }}
+                group={{ resources: ['Resources', 'Group'] }}
+                views={[
+                    "Day",
+                    "Week",
+                    "WorkWeek",
+                    "Month",
+                    "Agenda",
+                    { option: "TimelineDay" },
+                    { option: "TimelineWeek" },
+                    {
+                        option: "TimelineWorkWeek",
+                        interval: 4,
+                        // showWeekend: false,
+
+                        startHour: "08:00",
+                        endHour: "14:00",
+                        timeScale: {
+                            enable: true,
+                            interval: 140,
+                            slotCount: 3,
+                        }
+
+                    },
+                    { option: "TimelineMonth", interval: 3 }
+
+                ]}
+                currentView="TimelineMonth"
+                allowDragAndDrop={true}
+                allowResizing={true}
+                //  cellTemplate={<CellTempleteOne></CellTempleteOne>}
+                renderCell={CellTempleteOne}
 
 
-                        <ResourceDirective
-                            textField='Name'
-                            idField='Id'
-                            colorField='Color'
-                            groupIDField='GroupId'
-                            allowMultiple={true}
-                            field='GroupId'
-                            name='Group'
-                            title='Group Title'
-                            dataSource={maindata.children}
-                        // dataSource={resourceDataSourceFirstLayer}
-                        >
+            >
+                <ResourcesDirective >
+                    <ResourceDirective
+                        field="ResourceId"
+                        name="Resources"
+                        dataSource={maindata.layer_one}
+                        textField="Name"
+                        idField="Id"
+                        colorField="Color"
 
-                        </ResourceDirective>
-                    </ResourcesDirective>
-                    <Inject services={[Day, Week, WorkWeek, Month, Agenda, TimelineViews, TimelineMonth, DragAndDrop, Resize]} />
 
-                </ScheduleComponent>
-            
+                    // dataSource={resourceDataSourceSecondLayer}
 
+                    />
+
+
+                    <ResourceDirective
+                        textField='Name'
+                        idField='Id'
+                        colorField='Color'
+                        groupIDField='GroupId'
+                        allowMultiple={true}
+                        field='GroupId'
+                        name='Group'
+                        title='Group Title'
+                        dataSource={maindata.children}
+                    // dataSource={resourceDataSourceFirstLayer}
+                    >
+
+                    </ResourceDirective>
+                </ResourcesDirective>
+                <Inject services={[Day, Week, WorkWeek, Month, Agenda, TimelineViews, TimelineMonth, DragAndDrop, Resize]} />
+
+            </ScheduleComponent> */}
         </>
     );
 }

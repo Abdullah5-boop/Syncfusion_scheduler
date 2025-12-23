@@ -9,24 +9,7 @@ import Linedata from "./line.js";
 import PlanData from "./Plan.js";
 import modifyStratAndEndTime from "./compayredesign.js";
 import companyInfoList from "./company.js";
-
-
-
-
-// let PlanData = []
-// fetch(`http://localhost:3000/plan`)
-//     .then(res => res.json())
-//     .then(data => { PlanData = data; console.log(data) })
-//     .catch(err=> console.log(err))
-
-
-
-// console.log("_".repeat(50))
-// console.log(PlanData)
-// console.log("_".repeat(50))
-
-
-
+import { getAllData } from "./ApiData/ApiFetch.jsx";
 
 const colors = [
   "#1abc9c", "#8e44ad", "#2ecc71", "#27ae60", "#3498db",
@@ -46,6 +29,9 @@ const colors = [
   "#2ed573", "#7bed9f", "#70a1ff", "#5352ed", "#3742fa",
   "#ffa502", "#ff6b81", "#a4b0be", "#57606f", "#2f3542"
 ];
+console.log("main data herec",await getAllData())
+
+
 
 function dateStringToDate(dateStr) {
   const [day, month, year] = dateStr.split("-").map(Number);
@@ -74,8 +60,7 @@ let children = Linedata.map((line, index) => {
     Id: index + 1,
     Name: line.LINE_NAME,
     GroupId: parent.Id,
-    line_id: line.LINE_ID,
-    ...line
+    line_id: line.LINE_ID
   }
 })
 
@@ -93,7 +78,7 @@ console.log(layer_one);
 
 console.log("_".repeat(50), "\n", "Child layer", "\n")
 console.log(children)
-console.log("_".repeat(50))
+
 
 
 
@@ -145,15 +130,12 @@ appointment.forEach(app => {
   if (!child) return;
 
   temps.push({
-    plan_Id: app.plan_id,
-    line_id : child.line_id,
+    Id: app.plan_id,
     Subject: app.subject,
     StartTime: app.startTime,   // ✅ already Date
     EndTime: app.endTime,       // ✅ already Date
     ResourceId: child.GroupId,  // floor
-    GroupId: child.Id,         // line
-    PLAN_ID: app.plan_id
-
+    GroupId: child.Id           // line
   });
 });
 

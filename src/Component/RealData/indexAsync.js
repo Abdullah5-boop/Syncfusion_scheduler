@@ -1,4 +1,8 @@
+import Linedata from "./line.js";
+import PlanData from "./Plan.js";
 import modifyStratAndEndTime from "./compayredesign.js";
+import companyInfoList from "./company.js";
+import { getAllData } from "./ApiData/ApiFetch.jsx";
 
 const colors = [
   "#1abc9c", "#8e44ad", "#2ecc71", "#27ae60", "#3498db",
@@ -19,32 +23,49 @@ const colors = [
   "#ffa502", "#ff6b81", "#a4b0be", "#57606f", "#2f3542"
 ];
 
-function processSchedulerData({ PlanData, Linedata, companyInfoList }) {
-  // 1️⃣ Create unique floor layers
-  let dataStore = Linedata.map(data => data.FLOOR_ID);
-  let unique_floor_id = Array.from(new Set(dataStore));
 
-  let layer_one = unique_floor_id.map((data, index) => ({
+
+const allData = await getAllData();
+
+
+async function prepareData() {
+  // ✅ Fetch external async data
+
+  console.log("main data here:", allData);
+
+  // helper function
+  function dateStringToDate(dateStr) {
+    const [day, month, year] = dateStr.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  }
+
+  // create parent layers
+  const dataStore = Linedata.map(data => data.FLOOR_ID);
+  const unique_floor_id = Array.from(new Set(dataStore));
+
+  const layer_one = unique_floor_id.map((data, index) => ({
     Name: data,
     Id: index + 1,
-    Color: colors[index % colors.length]
+    Color: colors[index]
   }));
 
-  // 2️⃣ Create child rows
-  let children = Linedata.map((line, index) => {
-    let parent = layer_one.find(p => p.Name === line.FLOOR_ID);
+  // create child layers
+  const children = Linedata.map((line, index) => {
+    const parent = layer_one.find(p => p.Name === line.FLOOR_ID);
     if (!parent) return null;
     return {
       Id: index + 1,
       Name: line.LINE_NAME,
-      GroupId: parent.Id, // floor ID
-      line_id: line.LINE_ID,
-      ...line
+      GroupId: parent.Id,
+      line_id: line.LINE_ID
     };
   }).filter(Boolean);
 
-  // 3️⃣ Create appointments
-  let appointment = PlanData.map(plan => {
+  console.log("_".repeat(50), "\nParent layer:\n", layer_one);
+  console.log("_".repeat(50), "\nChild layer:\n", children);
+
+  // create appointments
+  const appointment = PlanData.map(plan => {
     const value = modifyStratAndEndTime(
       plan.start_date,
       plan.start_hour,
@@ -62,28 +83,30 @@ function processSchedulerData({ PlanData, Linedata, companyInfoList }) {
     };
   }).filter(Boolean);
 
-  // 4️⃣ Merge appointments with children
-  let temps = appointment.map(app => {
+  console.log("_".repeat(40));
+  console.log("First appointment:", appointment[0]);
+  console.log("_".repeat(40));
+
+  // merge appointments with children
+  const temps = appointment.map(app => {
     const child = children.find(c => c.line_id === app.line_id);
     if (!child) return null;
 
     return {
-      Id: app.Id,
-      Plan_Id: app.plan_id,
-      Lin_Id: child.line_id,
+      Id: app.plan_id,
       Subject: app.subject,
       StartTime: app.startTime,
       EndTime: app.endTime,
       ResourceId: child.GroupId,
       GroupId: child.Id
-
     };
   }).filter(Boolean);
 
-  // 5️⃣ Optionally, a smaller sample
-  let temps2 = temps.length > 0 ? [temps[0]] : [];
+  const temps2 = temps.length ? [temps[0]] : [];
 
-  return { layer_one, children, temps, temps2 };
+  // ✅ return everything
+  return { layer_one, children, temps2, temps, allData };
 }
 
-export default processSchedulerData;
+// export a promise that resolves to fully prepared data
+export default prepareData();
