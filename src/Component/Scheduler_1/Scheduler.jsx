@@ -297,7 +297,7 @@ function Scheduler() {
                     //    editorTemplate={newPopupOpen}
                     // editorTemplate={editorTemplate}
                     popupOpen={onPopupOpen}
-                    // editorTemplate={AddEventPopup}
+                    editorTemplate={AddEventPopup}
                     cssClass='schedule-cell-dimension'
                     actionBegin={onActionBegin}
                     // popupOpen={disableDefaultEditor}

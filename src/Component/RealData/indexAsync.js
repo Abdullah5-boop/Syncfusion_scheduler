@@ -1,5 +1,5 @@
-import Linedata from "./line.js";
-import PlanData from "./Plan.js";
+// import Linedata from "./line.js";
+// import PlanData from "./Plan.js";
 import modifyStratAndEndTime from "./compayredesign.js";
 import companyInfoList from "./company.js";
 import { getAllData } from "./ApiData/ApiFetch.jsx";
@@ -33,6 +33,8 @@ async function prepareData() {
 
   console.log("main data here:", allData);
 
+  let Linedata = allData?.line
+  let PlanData = allData?.plan
   // helper function
   function dateStringToDate(dateStr) {
     const [day, month, year] = dateStr.split("-").map(Number);
@@ -83,9 +85,7 @@ async function prepareData() {
     };
   }).filter(Boolean);
 
-  console.log("_".repeat(40));
-  console.log("First appointment:", appointment[0]);
-  console.log("_".repeat(40));
+
 
   // merge appointments with children
   const temps = appointment.map(app => {
