@@ -12,7 +12,9 @@
 
 .read-the-docs {
   color: #888;
-} */
+}
+
+*/
 
 /* Ensure the custom class has a background color */
 .weekend-cell {
@@ -70,7 +72,7 @@
 /* Target the columns within the month view's content wrap */
 .custom-month-view.e-schedule .e-month-view .e-content-wrap table col {
   /* Set a fixed width. Use !important to override default Syncfusion styles */
-  width: 15px !important; 
+  width: 15px !important;
 }
 
 /* If you also need to affect the header columns (optional, as they usually match the content width) */
@@ -79,18 +81,11 @@
 }
 
 
-/* Timeline row height */
-.e-schedule .e-timeline-view .e-content-wrap table tr {
-  height: 120px !important; /* doubled */
-}
 
-/* Resource header must match */
-.e-schedule .e-timeline-view .e-resource-cells {
-  height: 120px !important;
-}
+
 .e-schedule .e-timeline-view .e-appointment {
-  height: 36px !important;
-  margin-top: 4px;
+  height: 136px !important;
+
 }
 
 /* clone */
@@ -101,3 +96,12 @@
   opacity: 0.95;
   pointer-events: none; 
 } */
+
+
+/* template */
+.e-appointment {
+  height: 18px !important;
+  padding: 0;
+  margin: 0;
+  
+}
