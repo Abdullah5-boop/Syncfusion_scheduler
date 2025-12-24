@@ -1,9 +1,16 @@
 
-// const planData = require("./Plan");
-import planData from './Plan'
-// const companyData = require("./company");
-import companyData from "./company"
 
+// import companyData from "./company"
+
+let companyData=[]
+try {
+    const workHourRes = await fetch('/api/work_hour/company_id/1/location_id/2/start_date/1-11-2025/end_date/1-12-2027');
+    const workHourData = await workHourRes.json();
+    console.log("_".repeat(40), "\nWork Hour:", workHourData);
+    companyData= workHourData.resultset
+} catch (err) {
+    console.error("Work Hour fetch error:", err);
+}
 /*************************************************
  * DATE CONVERTER
  *************************************************/
@@ -85,7 +92,7 @@ function modifyStratAndEndTime(start_date, start_th_hour, end_date, end_th_hour,
         return (
             applyDate &&
             applyDate.getMonth() === startDateObj.getMonth() &&
-            applyDate.getFullYear() === startDateObj.getFullYear() 
+            applyDate.getFullYear() === startDateObj.getFullYear()
             && com.COMPANY_ID === company_id
 
         );

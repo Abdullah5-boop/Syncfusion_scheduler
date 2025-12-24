@@ -1,32 +1,4 @@
 @import "tailwindcss";
-/* #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
 
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
@@ -92,4 +64,16 @@
 
 .dec-16-holiday-cell {
   background-color: #7f0505 !important;
+}
+
+/* App.css */
+/* Target the columns within the month view's content wrap */
+.custom-month-view.e-schedule .e-month-view .e-content-wrap table col {
+  /* Set a fixed width. Use !important to override default Syncfusion styles */
+  width: 15px !important; 
+}
+
+/* If you also need to affect the header columns (optional, as they usually match the content width) */
+.custom-month-view.e-schedule .e-month-view .e-date-header-wrap table col {
+  width: 15px !important;
 }
