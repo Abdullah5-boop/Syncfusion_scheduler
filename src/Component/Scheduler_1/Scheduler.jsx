@@ -291,6 +291,8 @@ function Scheduler() {
         // Optional: change text while dragging
         const subjectEl = el.querySelector('.e-subject');
         if (subjectEl) subjectEl.innerText = 'Dragging...';
+
+        console.log("drag start => ",args.data)
     };
 
 
@@ -316,10 +318,6 @@ function Scheduler() {
     };
 
 
-    const rowHeightMap = parent.reduce((acc, r) => {
-        acc[r.id] = r.rowHeight;
-        return acc;
-    }, {});
 
     const onDrag = (args) => {
         // const el = args.element;
@@ -336,8 +334,8 @@ function Scheduler() {
         //     el.style.setProperty('background-color', '#74b9ff', 'important');
         // }
 
-        console.log("=== Drag Event Start ===");
-        console.log("args:", args);
+        // console.log("=== Drag Event Start ===");
+        // console.log("args:", args);
 
         // 1️⃣ Get the work cell under the mouse
         const cell = args.event.target.closest("td.e-work-cells");
@@ -361,13 +359,13 @@ function Scheduler() {
             console.log("Mapped resourceId:", resourceId);
 
             // 4️⃣ Get the row height from your rowHeightMap
-            const height = rowHeightMap[resourceId];
+            const height = Math.ceil(Math.random()*200)+1;
             console.log("Row height from rowHeightMap:", height);
 
             // 5️⃣ Update the dragged element's visual height
             if (height) {
                 console.log(`Setting dragged element height to ${height}px`);
-                args.element.style.height = `${height}px`;
+                args.element.style.width = `${height}px`;
             } else {
                 console.log("No height found for this resourceId");
             }
@@ -415,15 +413,16 @@ function Scheduler() {
 
 
 
-
-
-
-
-
-
-
     useData();
-    console.log("Scheduler component rendered ", showPopup);
+
+
+
+console.log("line data -> ",line)
+
+
+
+
+
     return (
         <>
             {loading ?
@@ -435,9 +434,9 @@ function Scheduler() {
                     ref={scheduleObj}
                     //    editorTemplate={newPopupOpen}
                     // editorTemplate={editorTemplate}
-                    dragStart={onDragStart}
-                    drag={onDrag}
-                    dragStop={onDragStop}
+                    // dragStart={onDragStart}
+                    // drag={onDrag}
+                    // dragStop={onDragStop}
                     // beforeRender={onBeforeRender}
                     popupOpen={onPopupOpen}
                     editorTemplate={AddEventPopup}
@@ -447,7 +446,7 @@ function Scheduler() {
                     width="100%"
                     height="550px"
 
-                    rowAutoHeight={true}
+                    rowAutoHeight={false}
                     eventClick={EventClicked}
                     eventSettings={{ dataSource: line, template: Tooltip }}
                     // eventSettings={{ dataSource: appointmentData }}

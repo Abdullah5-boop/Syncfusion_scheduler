@@ -77,3 +77,18 @@
 .custom-month-view.e-schedule .e-month-view .e-date-header-wrap table col {
   width: 15px !important;
 }
+
+
+/* Timeline row height */
+.e-schedule .e-timeline-view .e-content-wrap table tr {
+  height: 120px !important; /* doubled */
+}
+
+/* Resource header must match */
+.e-schedule .e-timeline-view .e-resource-cells {
+  height: 120px !important;
+}
+.e-schedule .e-timeline-view .e-appointment {
+  height: 36px !important;
+  margin-top: 4px;
+}

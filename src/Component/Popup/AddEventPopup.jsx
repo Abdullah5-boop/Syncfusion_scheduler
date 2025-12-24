@@ -55,9 +55,9 @@ export default function AddEventPopup(props) {
   // ✅ Syncfusion event data lives here
   const data = props;
 
-  console.log("_".repeat(50));
-  console.log("AddEventPopup props:", data);
-  console.log("_".repeat(50));
+  // console.log("_".repeat(50));
+  // console.log("AddEventPopup props:", data);
+  // console.log("_".repeat(50));
 
   if (!data || typeof data !== "object") {
     return (

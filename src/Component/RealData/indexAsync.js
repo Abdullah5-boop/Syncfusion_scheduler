@@ -31,7 +31,7 @@ const allData = await getAllData();
 async function prepareData() {
   // ✅ Fetch external async data
 
-  console.log("main data here:", allData);
+  // console.log("main data here:", allData);
 
   let Linedata = allData?.line
   let PlanData = allData?.plan
@@ -48,7 +48,8 @@ async function prepareData() {
   const layer_one = unique_floor_id.map((data, index) => ({
     Name: data,
     Id: index + 1,
-    Color: colors[index]
+    Color: colors[index],
+    rowHeight: Math.ceil((Math.random()*100)+1)
   }));
 
   // create child layers
@@ -57,14 +58,14 @@ async function prepareData() {
     if (!parent) return null;
     return {
       Id: index + 1,
-      Name: line.LINE_NAME,
+      Name: line.LINE_ID,
       GroupId: parent.Id,
       line_id: line.LINE_ID
     };
   }).filter(Boolean);
 
-  console.log("_".repeat(50), "\nParent layer:\n", layer_one);
-  console.log("_".repeat(50), "\nChild layer:\n", children);
+  // console.log("_".repeat(50), "\nParent layer:\n", layer_one);
+  // console.log("_".repeat(50), "\nChild layer:\n", children);
 
   // create appointments
   const appointment = PlanData.map(plan => {
@@ -98,7 +99,9 @@ async function prepareData() {
       StartTime: app.startTime,
       EndTime: app.endTime,
       ResourceId: child.GroupId,
-      GroupId: child.Id
+      GroupId: child.Id,
+      LinehHeight: Math.random() * (400 - 200) + 200
+
     };
   }).filter(Boolean);
 
