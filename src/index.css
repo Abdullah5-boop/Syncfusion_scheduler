@@ -28,3 +28,7 @@
   .schedule-cell-dimension.e-schedule .e-month-view .e-work-cells {
       height: 200px!important;
   }
+ /* tr:has(> .e-child-node) {
+  background-color: lightblue !important;
+  height: 200px !important;
+} */

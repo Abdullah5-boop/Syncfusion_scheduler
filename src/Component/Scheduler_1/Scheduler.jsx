@@ -5,7 +5,7 @@ import {
     TimelineViews, TimelineMonth, DragAndDrop, Resize
 } from '@syncfusion/ej2-react-schedule';
 // import maindata from "../RealData/index2"
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import AddEventPopup from '../Popup/AddEventPopup';
 import CellTempleteOne from '../CellTemplete/CellTempleteOne';
 import { appointmentDatas, appointmentData } from '../Other/MakeAppointment';
@@ -292,7 +292,7 @@ function Scheduler() {
         const subjectEl = el.querySelector('.e-subject');
         if (subjectEl) subjectEl.innerText = 'Dragging...';
 
-        console.log("drag start => ",args.data)
+        console.log("drag start => ", args.data)
     };
 
 
@@ -320,66 +320,41 @@ function Scheduler() {
 
 
     const onDrag = (args) => {
-        // const el = args.element;
+        const target = args.event.target;
 
-        // // Example: change color based on hovered row
-        // const cell = args.target;
-        // if (!cell?.classList.contains('e-work-cells')) return;
+        const cell = target.closest('.e-work-cells');
+        if (!cell) return;
 
-        // const cellInfo = scheduleRef.current.getCellDetails(cell);
+        // cell.style.backgroundColor = "#ffeaa7";
 
-        // if (cellInfo.groupIndex === 0) {
-        //     el.style.setProperty('background-color', '#55efc4', 'important');
-        // } else {
-        //     el.style.setProperty('background-color', '#74b9ff', 'important');
-        // }
+        const groupIndex = cell.getAttribute('data-group-index');
+        let hole_child = child.find(c => c.Id === Number(groupIndex));
 
-        // console.log("=== Drag Event Start ===");
-        // console.log("args:", args);
+        let clone = document.querySelector('.e-drag-clone');
 
-        // 1️⃣ Get the work cell under the mouse
-        const cell = args.event.target.closest("td.e-work-cells");
-        console.log("Target cell under mouse:", cell);
+        if (clone) {
+            // ✅ Apply transition ONCE
+            if (!clone.dataset.transitionApplied) {
+                clone.dataset.transitionApplied = 'true';
 
-        if (!cell) {
-            console.log("No cell found under mouse. Exiting.");
-            return;
-        }
-
-        // 2️⃣ Get group index from the cell
-        const groupIndexStr = cell.getAttribute("data-group-index");
-        console.log("Group index string from cell:", groupIndexStr);
-
-        const groupIndex = groupIndexStr != null ? parseInt(groupIndexStr) : null;
-        console.log("Parsed group index:", groupIndex);
-
-        if (groupIndex != null) {
-            // 3️⃣ Map group index to resourceId (assuming your resources array is in order)
-            const resourceId = groupIndex + 1;
-            console.log("Mapped resourceId:", resourceId);
-
-            // 4️⃣ Get the row height from your rowHeightMap
-            const height = Math.ceil(Math.random()*200)+1;
-            console.log("Row height from rowHeightMap:", height);
-
-            // 5️⃣ Update the dragged element's visual height
-            if (height) {
-                console.log(`Setting dragged element height to ${height}px`);
-                args.element.style.width = `${height}px`;
-            } else {
-                console.log("No height found for this resourceId");
+                clone.style.transition = `
+        background-color 150ms ease,
+        border-radius 150ms ease,
+        width 200ms ease
+      `;
             }
-        } else {
-            console.log("Group index is null, skipping height update");
-        }
 
-        console.log("=== Drag Event End ===");
+            // ✅ Visual updates (safe)
+            clone.style.backgroundColor = '#7f06d1ff';
+            clone.style.borderRadius = '6px';
+            clone.style.width = `${hole_child?.line_hover_hight}px`;
+        }
     };
 
 
 
 
-
+    console.log({ line, parent, child })
 
 
 
@@ -417,8 +392,6 @@ function Scheduler() {
 
 
 
-console.log("line data -> ",line)
-
 
 
 
@@ -430,13 +403,13 @@ console.log("line data -> ",line)
 
                 <ScheduleComponent
 
-
+                    // maxEventsPerRow={0}
                     ref={scheduleObj}
                     //    editorTemplate={newPopupOpen}
                     // editorTemplate={editorTemplate}
-                    // dragStart={onDragStart}
-                    // drag={onDrag}
-                    // dragStop={onDragStop}
+                    dragStart={onDragStart}
+                    drag={onDrag}
+                    dragStop={onDragStop}
                     // beforeRender={onBeforeRender}
                     popupOpen={onPopupOpen}
                     editorTemplate={AddEventPopup}

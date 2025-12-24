@@ -92,3 +92,12 @@
   height: 36px !important;
   margin-top: 4px;
 }
+
+/* clone */
+/* .e-schedul .e-drag-clone {
+  background-color: rgba(222, 46, 23, 0.9) !important;
+  border: 2px dashed #fdcb6e !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25) !important;
+  opacity: 0.95;
+  pointer-events: none; 
+} */

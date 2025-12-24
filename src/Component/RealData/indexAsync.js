@@ -60,7 +60,8 @@ async function prepareData() {
       Id: index + 1,
       Name: line.LINE_ID,
       GroupId: parent.Id,
-      line_id: line.LINE_ID
+      line_id: line.LINE_ID,
+      line_hover_hight : Math.ceil(Math.random() * (400 - 200) + 200)
     };
   }).filter(Boolean);
 
@@ -100,7 +101,8 @@ async function prepareData() {
       EndTime: app.endTime,
       ResourceId: child.GroupId,
       GroupId: child.Id,
-      LinehHeight: Math.random() * (400 - 200) + 200
+      LinehHeight: Math.random() * (400 - 200) + 200,
+      LineId: child.line_id
 
     };
   }).filter(Boolean);
