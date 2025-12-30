@@ -172,11 +172,11 @@ const AppointmentDataUpdate = appointmentData.map(el => {
 }).filter(Boolean);
 
 
-console.log("_".repeat(50))
-console.log("AppointmentDataUpdate")
-console.log(AppointmentDataUpdate)
-console.log(appointmentDatas)
-console.log("_".repeat(50))
+// console.log("_".repeat(50))
+// console.log("AppointmentDataUpdate")
+// console.log(AppointmentDataUpdate)
+// console.log(appointmentDatas)
+// console.log("_".repeat(50))
 
 
 export { appointmentDatas, AppointmentDataUpdate as appointmentData};

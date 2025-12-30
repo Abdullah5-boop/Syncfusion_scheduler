@@ -37,7 +37,7 @@ export async function getAllData() {
             console.error("Line Info fetch error:", err);
         }
 
-        console.log("*".repeat(50), "\nFinal obj:", obj, "\n" + "*".repeat(50));
+        // console.log("*".repeat(50), "\nFinal obj:", obj, "\n" + "*".repeat(50));
         return obj;
 
     } catch (err) {

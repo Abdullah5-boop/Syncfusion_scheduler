@@ -70,16 +70,10 @@
 
 /* App.css */
 /* Target the columns within the month view's content wrap */
-.custom-month-view.e-schedule .e-month-view .e-content-wrap table col {
-  /* Set a fixed width. Use !important to override default Syncfusion styles */
-  width: 15px !important;
+/* Adjust the height of the month view cells */
+.custom-month-view.e-schedule .e-month-view .e-work-cells {
+  height: 100px !important; /* Set your desired height */
 }
-
-/* If you also need to affect the header columns (optional, as they usually match the content width) */
-.custom-month-view.e-schedule .e-month-view .e-date-header-wrap table col {
-  width: 15px !important;
-}
-
 
 
 

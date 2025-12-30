@@ -56,12 +56,13 @@ async function prepareData() {
   const children = Linedata.map((line, index) => {
     const parent = layer_one.find(p => p.Name === line.FLOOR_ID);
     if (!parent) return null;
+    let R_value =   Math.floor(Math.random() * ((4- 2) / 2 + 1)) * 2 + 2
     return {
       Id: index + 1,
-      Name: line.LINE_ID,
+      Name: line.LINE_ID+ " " + R_value,
       GroupId: parent.Id,
       line_id: line.LINE_ID,
-      line_hover_hight : Math.ceil(Math.random() * (400 - 200) + 200)
+      line_hover_hight : R_value
     };
   }).filter(Boolean);
 
@@ -101,7 +102,7 @@ async function prepareData() {
       EndTime: app.endTime,
       ResourceId: child.GroupId,
       GroupId: child.Id,
-      LinehHeight: Math.random() * (400 - 200) + 200,
+      
       LineId: child.line_id
 
     };
