@@ -6,7 +6,7 @@ import {
 } from '@syncfusion/ej2-react-schedule';
 // import maindata from "../RealData/index2"
 import { useEffect, useRef, useState } from 'react';
-import AddEventPopup from '../Popup/AddEventPopup';
+import AddEventPopup from '../Popup/EventShowPopup.jsx';
 import CellTempleteOne from '../CellTemplete/CellTempleteOne';
 import { appointmentDatas, appointmentData } from '../Other/MakeAppointment';
 import preparedData from "../RealData/indexAsync.js";
@@ -17,6 +17,9 @@ import Tooltip from '../Popup/ToolTip.jsx';
 import OnChangeHover from '../OnActionBegin/OnChangeHover.jsx';
 import FindConflictEvent from '../OnActionBegin/findConflictEvent.jsx';
 import OnDrag from '../Ondrag/Ondrag.jsx';
+import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns/index.js';
+import { DatePickerComponent } from '@syncfusion/ej2-react-calendars/index.js';
+import AddEvent from '../Popup/AddEvent.jsx';
 
 const special = [
     {
@@ -108,157 +111,6 @@ const EventClicked = (arg) => {
 
 
 
-// const onActionBegin = (args) => {
-
-//     let specialDayConfictState = false;
-//     OnChangeHover(args)
-//     if (args.requestType === "eventCreate" || args.requestType === "eventChange") {
-//         const eventData = Array.isArray(args.data) ? args.data[0] : args.data;
-
-//         console.log("onActionBegin -> ", eventData);
-
-
-//         let startTime = new Date(eventData.StartTime);
-//         let endTime = new Date(eventData.EndTime);
-//         let resourceId = eventData.ResourceId;
-
-//         const conflictEvent = appointmentData.find(evt => {
-//             if (evt.Id === eventData.Id) return false;  // ignore same event on update
-//             if (evt.ResourceId !== resourceId) return false;
-
-//             const evtStart = new Date(evt.StartTime);
-//             const evtEnd = new Date(evt.EndTime);
-
-//             // overlap condition
-//             return startTime < evtEnd && endTime > evtStart;
-//         });
-//         let dateMatch = "dateMatch";
-//         let timematch = "timematch";
-
-
-
-//         const es = new Date(eventData.StartTime)
-//         const ee = new Date(eventData.EndTime)
-//         function isSameDay(d1, d2) {
-//             let data =
-//                 d1.getFullYear() === d2.getFullYear() &&
-//                 d1.getMonth() === d2.getMonth() &&
-//                 d1.getDate() === d2.getDate()
-//             console.log("isSameDay data -> ", data);
-//             return data ? "dateMatchDone" : "dataMatchFail";
-
-//         }
-//         function specialNotification(NotificationclassName) {
-//             let form = document.querySelector(`.${NotificationclassName}`);
-//             let errorMsg = document.createElement("div");
-//             errorMsg.innerHTML = "Scheduling conflict with special working hours!";
-//             errorMsg.style.color = "red";
-//             errorMsg.style.fontWeight = "bold";
-//             if (form) form.appendChild(errorMsg);
-//             // return errorMsg;
-//         }
-//         // function isWithinWorkingHours() {
-
-//         special.forEach(s => {
-//             let dateCheck = isSameDay(es, s.date);
-//             console.log("dateCheck -> ", dateCheck);
-
-//             if (dateCheck == "dateMatchDone") {
-//                 if (
-//                     es.getTime() >= s.startTime.getTime() &&
-//                     ee.getTime() <= s.endTime.getTime()
-//                 ) {
-
-//                     console.log("date and time match ");
-//                     return "dateAndTimeMatch";
-//                 } else {
-//                     args.cancel = true;
-//                     specialNotification("e-title-text")
-//                     console.log("date match but time not match ");
-//                     confirm("Scheduling conflict with special working hours!");
-//                     return "DateMatchTimeNotMatch";
-
-//                 }
-//             } else {
-//                 console.log("date not match ");
-//                 return "dateNotMatch";
-//             }
-//         })
-
-
-
-//         // for (const s of special) {
-//         //     let dateCheck = isSameDay(es, s.date);
-//         //     if (dateCheck === "dateMatchDone") {
-//         //         if (
-//         //             es.getTime() >= s.startTime.getTime() &&
-//         //             ee.getTime() <= s.endTime.getTime()
-//         //         ) 
-//         //         { return "dateAndTimeMatch";
-
-//         //          }
-//         //         else {
-//         //             return "DatetimeNotMatch";
-//         //         }
-//         //     }
-//         //     else return "dateNotMatch";
-
-
-//         //     // if (isSameDay(es, s.date)) {
-//         //     //     if (
-//         //     //         es.getTime() >= s.startTime.getTime() &&
-//         //     //         ee.getTime() <= s.endTime.getTime()
-//         //     //     ) { return true; }
-//         //     //     else return false;
-//         //     // }
-//         //     // else return false;
-
-
-//         // }
-//         // return "loop does not work";
-//         // }
-
-//         // console.log("_".repeat(20), "\n", "map function");
-//         // console.log(special.map(s => isSameDay(s.startTime, es)));
-
-//         // let dateStatus = isWithinWorkingHours();
-//         // console.log("*_".repeat(20), "\n");
-//         // console.log("dateStatus -> ", dateStatus);
-
-//         console.log("_".repeat(20), "\n");
-
-
-//         //console.log("_".repeat(20), "\n", "foreach function");
-//         //console.log(isWithinWorkingHours());
-//         //console.log("_".repeat(20), "\n");
-
-
-
-//         if (conflictEvent) {
-//             console.log("❌ Conflict detected with event:", conflictEvent);
-
-//             let comp = document.querySelector(".e-title-text");
-//             console.log("comp -> ", comp);
-//             let newTitle = document.createElement("div");
-//             newTitle.innerHTML = "Conflict detected with event: " + conflictEvent.Subject;
-//             newTitle.style.color = "red";
-//             newTitle.style.fontWeight = "bold";
-//             if (comp) {
-//                 args.cancel = true;
-//                 alert("this date is already booked")
-//                 comp.appendChild(newTitle);
-
-//             }
-//             if (form) form.appendChild(errorMsg);
-
-//             return;
-//         }
-
-//         console.log("✅ No conflict. Event can be created.");
-//     }
-
-
-// };
 
 
 
@@ -270,19 +122,24 @@ function Scheduler() {
     let [child, setChild] = useState([])
     let [line, setLine] = useState([])
     let [loading, setLoading] = useState(true)
+    const [events, setEvents] = useState([]);
     // Removed invalid destructuring declaration
     const scheduleObj = useRef(null);
     const onPopupOpen = (args) => {
-        // Cancel default editor
-        if (args.type === "QuickInfo") {
-            // args.cancel = true;
-        }
+
         console.log("onPopupOpen args -> ", args);
     };
-    const newPopupOpen = (args) => {
-        return (<AddEventPopup args={args}></AddEventPopup>)
 
+
+
+    const onActionComplete = (args) => {
+        console.log("onActionComplete")
+        if (args.requestType === "eventCreated") {
+            setEvents(prev => [...prev, args.data[0]]);
+        }
     }
+
+
     const onDragStart = (args) => {
         const el = args.element; // This is the drag helper that sticks to mouse
 
@@ -302,8 +159,14 @@ function Scheduler() {
 
     const onActionBegin = (args) => {
 
-        let specialDayConfictState = false;
 
+        if (args.requestType === "eventCreate") {
+            console.log("Final event data:", args.data);
+        }
+
+
+        let specialDayConfictState = false;
+        console.log("hi", args)
         if (args.requestType === "eventCreate" || args.requestType === "eventChange") {
             const eventData = Array.isArray(args.data) ? args.data[0] : args.data;
 
@@ -379,29 +242,7 @@ function Scheduler() {
 
             console.log("_".repeat(20), "\n");
 
-
-
-            // if (conflictEvent) {
-            //     console.log("❌ Conflict detected with event:", conflictEvent);
-
-            //     let comp = document.querySelector(".e-title-text");
-            //     console.log("comp -> ", comp);
-            //     let newTitle = document.createElement("div");
-            //     newTitle.innerHTML = "Conflict detected with event: " + conflictEvent.Subject;
-            //     newTitle.style.color = "red";
-            //     newTitle.style.fontWeight = "bold";
-            //     if (comp) {
-            //         args.cancel = true;
-            //         alert("this date is already booked")
-            //         comp.appendChild(newTitle);
-
-            //     }
-            //     if (form) form.appendChild(errorMsg);
-
-            //     return;
-            // }
-
-
+          
 
             const conflictEvent = FindConflictEvent(eventData, appointmentData);
 
@@ -423,7 +264,7 @@ function Scheduler() {
 
 
     const onDrag = (args) => {
-        OnDrag(args,child,line)
+        OnDrag(args, child, line)
         // console.log("_".repeat(50), '\n', '* end * ')
     };
 
@@ -458,6 +299,7 @@ function Scheduler() {
         setChild(data.children);
         setLine(data.temps);
         setLoading(true)
+        setEvents(data.temps);
         // console.log(, data.children, data.temps);
     }
 
@@ -475,18 +317,18 @@ function Scheduler() {
         <>
             {loading ?
                 <ScheduleComponent
-
+                    actionComplete={onActionComplete}
                     // maxEventsPerRow={0}
                     ref={scheduleObj}
-                    //    editorTemplate={newPopupOpen}
-                    // editorTemplate={editorTemplate}
+                    editorTemplate={AddEvent}
+
                     dragStart={onDragStart}
                     drag={onDrag}
                     dragStop={onDragStop}
                     // beforeRender={onBeforeRender}
                     selectedDate={new Date(2025, 11, 1)}
                     popupOpen={onPopupOpen}
-                    editorTemplate={AddEventPopup}
+                    // editorTemplate={AddEventPopup}
                     cssClass='custom-month-view'
                     actionBegin={onActionBegin}
                     // popupOpen={disableDefaultEditor}
@@ -495,7 +337,7 @@ function Scheduler() {
 
                     rowAutoHeight={false}
                     eventClick={EventClicked}
-                    eventSettings={{ dataSource: line, template: Tooltip }}
+                    eventSettings={{ dataSource: events, template: Tooltip }}
                     // eventSettings={{ dataSource: appointmentData }}
                     group={{ resources: ['Resources', 'Group'] }}
                     views={[
@@ -576,88 +418,6 @@ function Scheduler() {
 
 
 
-            {/* <ScheduleComponent
-                //    editorTemplate={newPopupOpen}
-                // editorTemplate={editorTemplate}
-                popupOpen={onPopupOpen}
-                // editorTemplate={AddEventPopup}
-                cssClass='schedule-cell-dimension'
-                actionBegin={onActionBegin}
-                // popupOpen={disableDefaultEditor}
-                width="100%"
-                height="550px"
-
-                rowAutoHeight={true}
-                eventClick={EventClicked}
-                eventSettings={{ dataSource: maindata.temps }}
-                // eventSettings={{ dataSource: appointmentData }}
-                group={{ resources: ['Resources', 'Group'] }}
-                views={[
-                    "Day",
-                    "Week",
-                    "WorkWeek",
-                    "Month",
-                    "Agenda",
-                    { option: "TimelineDay" },
-                    { option: "TimelineWeek" },
-                    {
-                        option: "TimelineWorkWeek",
-                        interval: 4,
-                        // showWeekend: false,
-
-                        startHour: "08:00",
-                        endHour: "14:00",
-                        timeScale: {
-                            enable: true,
-                            interval: 140,
-                            slotCount: 3,
-                        }
-
-                    },
-                    { option: "TimelineMonth", interval: 3 }
-
-                ]}
-                currentView="TimelineMonth"
-                allowDragAndDrop={true}
-                allowResizing={true}
-                //  cellTemplate={<CellTempleteOne></CellTempleteOne>}
-                renderCell={CellTempleteOne}
-
-
-            >
-                <ResourcesDirective >
-                    <ResourceDirective
-                        field="ResourceId"
-                        name="Resources"
-                        dataSource={maindata.layer_one}
-                        textField="Name"
-                        idField="Id"
-                        colorField="Color"
-
-
-                    // dataSource={resourceDataSourceSecondLayer}
-
-                    />
-
-
-                    <ResourceDirective
-                        textField='Name'
-                        idField='Id'
-                        colorField='Color'
-                        groupIDField='GroupId'
-                        allowMultiple={true}
-                        field='GroupId'
-                        name='Group'
-                        title='Group Title'
-                        dataSource={maindata.children}
-                    // dataSource={resourceDataSourceFirstLayer}
-                    >
-
-                    </ResourceDirective>
-                </ResourcesDirective>
-                <Inject services={[Day, Week, WorkWeek, Month, Agenda, TimelineViews, TimelineMonth, DragAndDrop, Resize]} />
-
-            </ScheduleComponent> */}
         </>
     );
 }

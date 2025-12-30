@@ -57,7 +57,7 @@ import "../node_modules/@syncfusion/ej2-splitbuttons/styles/material.css";
 import "../node_modules/@syncfusion/ej2-react-schedule/styles/material.css";
 
 
-registerLicense('Ngo9BigBOggjHTQxAR8/V1JFaF1cXGFCf0x+WmFZfVhgcV9DZVZVQmYuP1ZhSXxWd0djUH1dcHxWT2ZbVUd9XEM=');
+registerLicense('Ngo9BigBOggjGyl/Vkd+XU9FcVRDQmtWfFN0Q3NcdVt1flFAcC0sT3RfQFhiS31TdkVmXH9fdH1QT2tfUA==');
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />

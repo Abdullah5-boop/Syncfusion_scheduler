@@ -10,8 +10,8 @@ export default function OnChangeHover(args, line, child) {
     let end_date = new Date(args.data.EndTime)
     
     // end_date.setDate(end_date.getDate() +1)
-    let date_input = matchedChild.line_hover_hight 
-    end_date.setDate(end_date.getDate() + matchedChild.line_hover_hight)
+    let date_input = 3
+    end_date.setDate(end_date.getDate() + 3)
     args.data.EndTime = end_date
 
 
