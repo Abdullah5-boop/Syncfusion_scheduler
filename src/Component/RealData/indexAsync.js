@@ -89,8 +89,8 @@ async function prepareData() {
   }).filter(Boolean);
 
 
+let color=['red','green']
 
-  // merge appointments with children
   const temps = appointment.map(app => {
     const child = children.find(c => c.line_id === app.line_id);
     if (!child) return null;
@@ -102,7 +102,7 @@ async function prepareData() {
       EndTime: app.endTime,
       ResourceId: child.GroupId,
       GroupId: child.Id,
-      
+      location:color,
       LineId: child.line_id
 
     };

@@ -20,6 +20,7 @@ import OnDrag from '../Ondrag/Ondrag.jsx';
 import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns/index.js';
 import { DatePickerComponent } from '@syncfusion/ej2-react-calendars/index.js';
 import AddEvent from '../Popup/AddEvent.jsx';
+import EditorFooter from '../Popup/EditorFooter.jsx';
 
 const special = [
     {
@@ -128,14 +129,17 @@ function Scheduler() {
     const onPopupOpen = (args) => {
 
         console.log("onPopupOpen args -> ", args);
+        if(args.type ==="QuickInfo") {
+            console.log("hitted")
+            //  scheduleObj.current.addEvent(args.data)
+        }
     };
 
-
-
+    console.log({ line, parent, child })
     const onActionComplete = (args) => {
-        console.log("onActionComplete")
+        console.log("onActionComplete \n",args)
         if (args.requestType === "eventCreated") {
-            setEvents(prev => [...prev, args.data[0]]);
+            // setEvents(prev => [...prev, args.data[0]]);
         }
     }
 
@@ -242,7 +246,7 @@ function Scheduler() {
 
             console.log("_".repeat(20), "\n");
 
-          
+
 
             const conflictEvent = FindConflictEvent(eventData, appointmentData);
 
@@ -293,22 +297,32 @@ function Scheduler() {
 
 
 
-    async function useData() {
-        const data = await preparedData;
-        setParent(data.layer_one);
-        setChild(data.children);
-        setLine(data.temps);
-        setLoading(true)
-        setEvents(data.temps);
-        // console.log(, data.children, data.temps);
-    }
+    // async function useData() {
+    //     const data = await preparedData;
+    //     setParent(data.layer_one);
+    //     setChild(data.children);
+    //     setLine(data.temps);
+    //     setLoading(true)
+    //     setEvents(data.temps);
+    //     // console.log(, data.children, data.temps);
+    // }
 
 
 
-    useData();
+    // useData();
 
 
-
+useEffect(() => {
+  async function fetchData() {
+    const data = await preparedData;
+    setParent(data.layer_one);
+    setChild(data.children);
+    setLine(data.temps);
+    setEvents(data.temps);
+    setLoading(true);
+  }
+  fetchData();
+}, []);
 
 
 
@@ -317,14 +331,17 @@ function Scheduler() {
         <>
             {loading ?
                 <ScheduleComponent
+                   ref={scheduleObj}
                     actionComplete={onActionComplete}
                     // maxEventsPerRow={0}
-                    ref={scheduleObj}
-                    editorTemplate={AddEvent}
+                 
+                    // editorTemplate={(props) => (
+                    //     <AddEvent {...props} scheduleObj={scheduleObj} />
+                    // )}
 
-                    dragStart={onDragStart}
-                    drag={onDrag}
-                    dragStop={onDragStop}
+                    // dragStart={onDragStart}
+                    // drag={onDrag}
+                    // dragStop={onDragStop}
                     // beforeRender={onBeforeRender}
                     selectedDate={new Date(2025, 11, 1)}
                     popupOpen={onPopupOpen}
@@ -337,7 +354,7 @@ function Scheduler() {
 
                     rowAutoHeight={false}
                     eventClick={EventClicked}
-                    eventSettings={{ dataSource: events, template: Tooltip }}
+                    eventSettings={{ dataSource: events  }}
                     // eventSettings={{ dataSource: appointmentData }}
                     group={{ resources: ['Resources', 'Group'] }}
                     views={[

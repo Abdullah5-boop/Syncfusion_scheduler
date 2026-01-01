@@ -1,9 +1,12 @@
 import { DateTimePickerComponent } from "@syncfusion/ej2-react-calendars";
-
+import { useState } from "react";
 
 
 export default function AddEvent(props) {
   const data = props.data || props.event || {};
+  const [subject, setSubject] = useState(data.Subject || "");
+  const [startTime, setStartTime] = useState(data.StartTime || new Date());
+  const [endTime, setEndTime] = useState(data.EndTime || new Date());
 
   return (
     <div className="custom-editor">
@@ -15,49 +18,38 @@ export default function AddEvent(props) {
               <input
                 name="Subject"
                 className="e-field e-input"
-                defaultValue={data.Subject || ""}
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
               />
             </td>
           </tr>
-
           <tr>
             <td className="e-textlabel">Start Time</td>
             <td>
               <DateTimePickerComponent
                 name="StartTime"
                 className="e-field"
-                defaultValue={data.StartTime || new Date()}
+                value={startTime}
+                change={(e) => setStartTime(e.value)}
               />
             </td>
           </tr>
-
           <tr>
             <td className="e-textlabel">End Time</td>
             <td>
               <DateTimePickerComponent
                 name="EndTime"
                 className="e-field"
-                defaultValue={data.EndTime || new Date()}
+                value={endTime}
+                change={(e) => setEndTime(e.value)}
               />
             </td>
           </tr>
         </tbody>
       </table>
 
-      {/* 🔒 ALWAYS render hidden fields */}
-      <input
-        type="hidden"
-        name="ResourceId"
-        className="e-field"
-        defaultValue={data.ResourceId || ""}
-      />
-
-      <input
-        type="hidden"
-        name="GroupId"
-        className="e-field"
-        defaultValue={data.GroupId || ""}
-      />
+      <input type="hidden" name="ResourceId" className="e-field" value={data.ResourceId || ""} />
+      <input type="hidden" name="GroupId" className="e-field" value={data.GroupId || ""} />
     </div>
   );
 }
