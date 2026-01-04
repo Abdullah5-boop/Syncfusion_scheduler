@@ -56,8 +56,8 @@ import "../node_modules/@syncfusion/ej2-popups/styles/material.css";
 import "../node_modules/@syncfusion/ej2-splitbuttons/styles/material.css";
 import "../node_modules/@syncfusion/ej2-react-schedule/styles/material.css";
 
-
-registerLicense('Ngo9BigBOggjGyl/Vkd+XU9FcVRDQmtWfFN0Q3NcdVt1flFAcC0sT3RfQFhiS31TdkVmXH9fdH1QT2tfUA==');
+let key ="Ngo9BigBOggjHTQxAR8/V1JGaF5cXGpCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdlWX5ec3ZWRWhYV01xWUdWYEs="
+registerLicense(key);
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />

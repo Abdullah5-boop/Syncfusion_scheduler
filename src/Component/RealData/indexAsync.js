@@ -102,7 +102,7 @@ let color=['red','green']
       EndTime: app.endTime,
       ResourceId: child.GroupId,
       GroupId: child.Id,
-      location:color,
+      color:color,
       LineId: child.line_id
 
     };

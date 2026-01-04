@@ -152,9 +152,7 @@ function modifyStratAndEndTime(start_date, start_th_hour, end_date, end_th_hour,
     // console.log(result)
     return obj
 }
-function helloWorld() {
-    console.log("hello world")
-}
+
 
 
 

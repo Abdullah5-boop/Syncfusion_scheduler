@@ -4,6 +4,8 @@ import {
     Inject, ResourcesDirective, ResourceDirective,
     TimelineViews, TimelineMonth, DragAndDrop, Resize
 } from '@syncfusion/ej2-react-schedule';
+import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
+
 // import maindata from "../RealData/index2"
 import { useEffect, useRef, useState } from 'react';
 import AddEventPopup from '../Popup/EventShowPopup.jsx';
@@ -21,6 +23,9 @@ import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns/index.js'
 import { DatePickerComponent } from '@syncfusion/ej2-react-calendars/index.js';
 import AddEvent from '../Popup/AddEvent.jsx';
 import EditorFooter from '../Popup/EditorFooter.jsx';
+import { createElement } from '@syncfusion/ej2-base';
+import { DropDownList } from '@syncfusion/ej2-dropdowns';
+
 
 const special = [
     {
@@ -126,18 +131,41 @@ function Scheduler() {
     const [events, setEvents] = useState([]);
     // Removed invalid destructuring declaration
     const scheduleObj = useRef(null);
+    const buttonObj = useRef(null);
     const onPopupOpen = (args) => {
 
-        console.log("onPopupOpen args -> ", args);
-        if(args.type ==="QuickInfo") {
-            console.log("hitted")
-            //  scheduleObj.current.addEvent(args.data)
+        if (args.type === 'Editor') {
+            if (!args.element.querySelector('.custom-field-row')) {
+                let row = createElement('div', { className: 'custom-field-row' });
+                let formElement = args.element.querySelector('.e-schedule-form');
+                formElement.firstChild.insertBefore(row, formElement.firstChild.firstChild);
+                let container = createElement('div', { className: 'custom-field-container' });
+                let inputEle = createElement('input', {
+                    className: 'e-field', attrs: { name: 'EventType' }
+                });
+                container.appendChild(inputEle);
+                row.appendChild(container);
+                let drowDownList = new DropDownList({
+                    dataSource: [
+                        { text: 'Public Event', value: 'public-event' },
+                        { text: 'Maintenance', value: 'maintenance' },
+                        { text: 'Commercial Event', value: 'commercial-event' },
+                        { text: 'Family Event', value: 'family-event' }
+                    ],
+                    fields: { text: 'text', value: 'value' },
+                    value: args.data.EventType,
+                    floatLabelType: 'Always', placeholder: 'Event Type'
+                });
+                drowDownList.appendTo(inputEle);
+                inputEle.setAttribute('name', 'EventType');
+            }
         }
     };
-
+    console.log("_".repeat(50))
     console.log({ line, parent, child })
+    console.log("_".repeat(50))
     const onActionComplete = (args) => {
-        console.log("onActionComplete \n",args)
+        console.log("onActionComplete \n", args)
         if (args.requestType === "eventCreated") {
             // setEvents(prev => [...prev, args.data[0]]);
         }
@@ -312,29 +340,78 @@ function Scheduler() {
     // useData();
 
 
-useEffect(() => {
-  async function fetchData() {
-    const data = await preparedData;
-    setParent(data.layer_one);
-    setChild(data.children);
-    setLine(data.temps);
-    setEvents(data.temps);
-    setLoading(true);
-  }
-  fetchData();
-}, []);
+    useEffect(() => {
+        async function fetchData() {
+            const data = await preparedData;
+            setParent(data.layer_one);
+            setChild(data.children);
+            setLine(data.temps);
+            setEvents(data.temps);
+            setLoading(true);
+        }
+        fetchData();
+    }, []);
+    const onAddClick = () => {
+        const today = new Date();
+
+        let Data =
+            [
+                {
+                    Id: 1,
+                    Subject: 'Conference',
+                    StartTime: new Date(
+                        today.getFullYear(),
+                        today.getMonth(),
+                        today.getDate(),
+                        9, 0
+                    ),
+                    EndTime: new Date(
+                        today.getFullYear(),
+                        today.getMonth(),
+                        today.getDate(),
+                        10, 0
+                    ),
+                    IsAllDay: false,
+                    GroupId: 1,
+                    ResourceId: 1
+                },
+                {
+                    Id: 2,
+                    Subject: 'Meeting',
+                    StartTime: new Date(
+                        today.getFullYear(),
+                        today.getMonth(),
+                        today.getDate(),
+                        10, 0
+                    ),
+                    EndTime: new Date(
+                        today.getFullYear(),
+                        today.getMonth(),
+                        today.getDate(),
+                        11, 30
+                    ),
+                    IsAllDay: false,
+                    GroupId: 1,
+                    ResourceId: 1
+                }
+            ];
+
+        scheduleObj.current.addEvent(Data);
+        buttonObj.current.element.setAttribute('disabled', 'true');
+    }
 
 
-
+    console.log(line.find(l => l.LineId === 500000))
 
     return (
         <>
+            <ButtonComponent id='add' title='Add' ref={buttonObj} onClick={onAddClick}>Add</ButtonComponent>
             {loading ?
                 <ScheduleComponent
-                   ref={scheduleObj}
+                    ref={scheduleObj}
                     actionComplete={onActionComplete}
                     // maxEventsPerRow={0}
-                 
+
                     // editorTemplate={(props) => (
                     //     <AddEvent {...props} scheduleObj={scheduleObj} />
                     // )}
@@ -354,7 +431,7 @@ useEffect(() => {
 
                     rowAutoHeight={false}
                     eventClick={EventClicked}
-                    eventSettings={{ dataSource: events  }}
+                    eventSettings={{ dataSource: events }}
                     // eventSettings={{ dataSource: appointmentData }}
                     group={{ resources: ['Resources', 'Group'] }}
                     views={[
