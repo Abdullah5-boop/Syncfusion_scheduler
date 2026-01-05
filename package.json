@@ -24,17 +24,22 @@
     "tailwindcss": "^4.1.18",
     "vite": "^7.2.4"
   },
-  "dependencies": {
-    "@syncfusion/ej2-grids": "^32.1.21",
-    "@syncfusion/ej2-popups": "^32.1.19",
-    "@syncfusion/ej2-react-buttons": "^32.1.21",
-    "@syncfusion/ej2-react-calendars": "^32.1.21",
-    "@syncfusion/ej2-react-dropdowns": "^32.1.21",
-    "@syncfusion/ej2-react-popups": "^32.1.19",
-    "@syncfusion/ej2-react-schedule": "^31.1.35",
-    "@syncfusion/ej2-react-treegrid": "^32.1.21",
-    "@syncfusion/ej2-splitbuttons": "^32.1.19",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
-  }
+"dependencies": {
+  "@syncfusion/ej2-base": "~31.1.17",
+  "@syncfusion/ej2-grids": "~31.1.17",
+  "@syncfusion/ej2-popups": "~31.1.17",
+  "@syncfusion/ej2-splitbuttons": "~31.1.17",
+
+  "@syncfusion/ej2-react-buttons": "~31.1.17",
+  "@syncfusion/ej2-react-calendars": "~31.1.17",
+  "@syncfusion/ej2-react-dropdowns": "~31.1.17",
+  "@syncfusion/ej2-react-popups": "~31.1.17",
+  "@syncfusion/ej2-react-schedule": "~31.1.17",
+  "@syncfusion/ej2-react-treegrid": "~31.1.17",
+
+  "react": "^19.2.0",
+  "react-dom": "^19.2.0"
+}
+
+
 }

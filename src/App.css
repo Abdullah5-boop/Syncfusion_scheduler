@@ -78,7 +78,7 @@
 
 
 .e-schedule .e-timeline-view .e-appointment {
-  height: 136px !important;
+  height: 22px !important;
 
 }
 
@@ -98,4 +98,23 @@
   padding: 0;
   margin: 0;
   
+}
+
+/* dynamic row height  */
+.e-time-cells {
+    display: flex;
+    align-items: center; /* vertical align text */
+    padding: 0 4px;
+    box-sizing: border-box;
+}
+
+
+
+/* auto hight adjust */
+.e-schedule .e-resource-column-wrap tr {
+    height: auto !important;
+}
+
+.e-schedule .e-resource-column-wrap td {
+    white-space: normal;
 }

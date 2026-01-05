@@ -351,6 +351,48 @@ function Scheduler() {
         }
         fetchData();
     }, []);
+
+
+
+
+    // useEffect(() => {
+    //     if (!scheduleObj.current) return;
+
+    //     const syncRowHeaderHeight = () => {
+    //         // Resource / row headers
+    //         const rowHeaders = document.querySelectorAll(
+    //             '.e-resource-column-wrap table tr'
+    //         );
+
+    //         // Content rows
+    //         const contentRows = document.querySelectorAll(
+    //             '.e-content-wrap table tr'
+    //         );
+
+    //         rowHeaders.forEach((headerRow, index) => {
+    //             const contentRow = contentRows[index];
+    //             if (contentRow) {
+    //                 headerRow.style.height = `${contentRow.offsetHeight}px`;
+    //                 headerRow.style.display = 'flex';
+    //                 headerRow.style.alignItems = 'center';
+    //             }
+    //         });
+    //     };
+
+    //     // Run after Scheduler layout is ready
+    //     setTimeout(syncRowHeaderHeight, 0);
+
+    //     // Re-sync on window resize
+    //     window.addEventListener('resize', syncRowHeaderHeight);
+    //     return () => window.removeEventListener('resize', syncRowHeaderHeight);
+    // }, [events]);
+
+
+
+
+
+
+
     const onAddClick = () => {
         const today = new Date();
 
@@ -409,7 +451,7 @@ function Scheduler() {
             {loading ?
                 <ScheduleComponent
                     ref={scheduleObj}
-                    actionComplete={onActionComplete}
+                    // actionComplete={onActionComplete}
                     // maxEventsPerRow={0}
 
                     // editorTemplate={(props) => (
@@ -420,7 +462,12 @@ function Scheduler() {
                     // drag={onDrag}
                     // dragStop={onDragStop}
                     // beforeRender={onBeforeRender}
-                    selectedDate={new Date(2025, 11, 1)}
+
+
+
+                    // actionComplete={() => syncRowHeaderHeight()}
+                    // dataBound={() => syncRowHeaderHeight()}
+                    selectedDate={new Date(2026, 1, 1)}
                     popupOpen={onPopupOpen}
                     // editorTemplate={AddEventPopup}
                     cssClass='custom-month-view'
@@ -429,11 +476,12 @@ function Scheduler() {
                     width="100%"
                     height="550px"
 
-                    rowAutoHeight={false}
+                    rowAutoHeight={true}
                     eventClick={EventClicked}
                     eventSettings={{ dataSource: events }}
                     // eventSettings={{ dataSource: appointmentData }}
                     group={{ resources: ['Resources', 'Group'] }}
+
                     views={[
                         "Day",
                         "Week",
@@ -441,27 +489,43 @@ function Scheduler() {
                         "Month",
                         "Agenda",
                         { option: "TimelineDay" },
-                        { option: "TimelineWeek" },
                         {
-                            option: "TimelineWorkWeek",
-                            interval: 4,
-                            // showWeekend: false,
-
-                            startHour: "08:00",
-                            endHour: "14:00",
-                            timeScale: {
-                                enable: true,
-                                interval: 140,
-                                slotCount: 3,
-                            }
+                            option: "TimelineWeek",
+                            interval: 16,
+                            slotCount: 4,
+                            cellWidth: 60,
+                            headerRows: [{ option: 'Month' }],
 
                         },
-                        { option: "TimelineMonth", interval: 3 }
+
+
+
+                        // {
+                        //     option: "TimelineWorkWeek",
+                        //     interval: 4,
+                        //     // showWeekend: false,
+
+                        //     startHour: "08:00",
+                        //     endHour: "14:00",
+                        //     timeScale: {
+                        //         enable: true,
+                        //         interval: 140,
+                        //         slotCount: 3,
+                        //     }
+
+                        // },
+
+
+                        {
+                            option: "TimelineMonth",
+                            interval: 3,
+                            headerRows: [{ option: "Date" }]
+                        }
 
                     ]}
                     currentView="TimelineMonth"
                     allowDragAndDrop={true}
-                    allowResizing={true}
+                    allowResizing={false}
                     //  cellTemplate={<CellTempleteOne></CellTempleteOne>}
                     renderCell={CellTempleteOne}
 
@@ -499,10 +563,7 @@ function Scheduler() {
                     </ResourcesDirective>
                     <Inject services={[Day, Week, WorkWeek, Month, Agenda, TimelineViews, TimelineMonth, DragAndDrop, Resize]} />
 
-                </ScheduleComponent>
-
-
-                :
+                </ScheduleComponent> :
                 <Loading></Loading>
 
             }
