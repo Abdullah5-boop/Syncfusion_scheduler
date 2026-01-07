@@ -1,5 +1,7 @@
 @import "tailwindcss";
-
+@import "../node_modules/@syncfusion/ej2-base/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-react-buttons/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-react-popups/styles/material.css";
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
@@ -117,4 +119,30 @@
 
 .e-schedule .e-resource-column-wrap td {
     white-space: normal;
+}
+/* add popup html */
+
+
+
+.conflict-dialog .conflict-wrapper {
+ height: 50vh;
+ width: 50vh;
+ background-color: #146fbe;
+}
+
+.conflict-dialog .conflict-icon {
+    font-size: 32px;
+    color: #e53935;
+}
+
+.conflict-dialog .conflict-text h4 {
+    margin: 0 0 6px;
+    color: #b71c1c;
+}
+
+.conflict-dialog .conflict-actions {
+    margin-top: 16px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
 }

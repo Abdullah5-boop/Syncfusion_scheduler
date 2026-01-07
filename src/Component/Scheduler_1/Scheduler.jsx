@@ -25,6 +25,7 @@ import AddEvent from '../Popup/AddEvent.jsx';
 import EditorFooter from '../Popup/EditorFooter.jsx';
 import { createElement } from '@syncfusion/ej2-base';
 import { DropDownList } from '@syncfusion/ej2-dropdowns';
+import DialogComponentFun from '../Popup/DialogComponent.jsx';
 
 
 const special = [
@@ -127,8 +128,11 @@ function Scheduler() {
     let [parent, setParent] = useState([])
     let [child, setChild] = useState([])
     let [line, setLine] = useState([])
-    let [loading, setLoading] = useState(true)
     const [events, setEvents] = useState([]);
+    const [pendingEventData, setPendingEventData] = useState(null);
+    const [conflictDialog, setConflictDialog] = useState(false);
+    let [agrsCancle, setargCancle] = useState(false)
+
     // Removed invalid destructuring declaration
     const scheduleObj = useRef(null);
     const buttonObj = useRef(null);
@@ -188,6 +192,25 @@ function Scheduler() {
         console.log("drag start => ", args.data)
     };
 
+    const handleUserChoice = (choice) => {
+        setConflictDialog(false);
+        console.log("handleUserChoice is hitted")
+        if (choice === 'override' && pendingEventData) {
+            console.log('User chose OVERRIDE');
+            setEvents(prev => [...prev, pendingEventData]);
+            
+        }
+
+        if (choice === 'cancel') {
+            setargCancle(true)
+            console.log('User cancelled event creation');
+        }
+
+        setPendingEventData(null);
+    };
+
+
+
 
     const onActionBegin = (args) => {
 
@@ -198,7 +221,7 @@ function Scheduler() {
 
 
         let specialDayConfictState = false;
-        console.log("hi", args)
+
         if (args.requestType === "eventCreate" || args.requestType === "eventChange") {
             const eventData = Array.isArray(args.data) ? args.data[0] : args.data;
 
@@ -276,13 +299,23 @@ function Scheduler() {
 
 
 
-            const conflictEvent = FindConflictEvent(eventData, appointmentData);
+            const conflictEvent = FindConflictEvent(eventData, events);
 
             if (conflictEvent) {
                 console.log("❌ Conflict detected with event:", conflictEvent);
 
-                args.cancel = true;
-                alert("This date is already booked!");
+
+                // alert("This date is already booked!");
+
+
+                // setPendingEventData(eventData);
+
+                // Show Syncfusion dialog
+                // setConflictDialog(true);
+             
+                  
+                    // args.cancel = true;
+                
 
                 return;
             }
@@ -340,6 +373,9 @@ function Scheduler() {
     // useData();
 
 
+
+
+
     useEffect(() => {
         async function fetchData() {
             const data = await preparedData;
@@ -347,7 +383,7 @@ function Scheduler() {
             setChild(data.children);
             setLine(data.temps);
             setEvents(data.temps);
-            setLoading(true);
+
         }
         fetchData();
     }, []);
@@ -355,37 +391,8 @@ function Scheduler() {
 
 
 
-    // useEffect(() => {
-    //     if (!scheduleObj.current) return;
 
-    //     const syncRowHeaderHeight = () => {
-    //         // Resource / row headers
-    //         const rowHeaders = document.querySelectorAll(
-    //             '.e-resource-column-wrap table tr'
-    //         );
 
-    //         // Content rows
-    //         const contentRows = document.querySelectorAll(
-    //             '.e-content-wrap table tr'
-    //         );
-
-    //         rowHeaders.forEach((headerRow, index) => {
-    //             const contentRow = contentRows[index];
-    //             if (contentRow) {
-    //                 headerRow.style.height = `${contentRow.offsetHeight}px`;
-    //                 headerRow.style.display = 'flex';
-    //                 headerRow.style.alignItems = 'center';
-    //             }
-    //         });
-    //     };
-
-    //     // Run after Scheduler layout is ready
-    //     setTimeout(syncRowHeaderHeight, 0);
-
-    //     // Re-sync on window resize
-    //     window.addEventListener('resize', syncRowHeaderHeight);
-    //     return () => window.removeEventListener('resize', syncRowHeaderHeight);
-    // }, [events]);
 
 
 
@@ -443,130 +450,135 @@ function Scheduler() {
     }
 
 
-    console.log(line.find(l => l.LineId === 500000))
+    // console.log(line.find(l => l.LineId === 500000))
 
     return (
         <>
-            <ButtonComponent id='add' title='Add' ref={buttonObj} onClick={onAddClick}>Add</ButtonComponent>
-            {loading ?
-                <ScheduleComponent
-                    ref={scheduleObj}
-                    // actionComplete={onActionComplete}
-                    // maxEventsPerRow={0}
+            {/* <ButtonComponent id='add' title='Add' ref={buttonObj} onClick={onAddClick}>Add</ButtonComponent> */}
 
-                    // editorTemplate={(props) => (
-                    //     <AddEvent {...props} scheduleObj={scheduleObj} />
-                    // )}
+            <ScheduleComponent
+                ref={scheduleObj}
+                // actionComplete={onActionComplete}
+                // maxEventsPerRow={0}
 
-                    // dragStart={onDragStart}
-                    // drag={onDrag}
-                    // dragStop={onDragStop}
-                    // beforeRender={onBeforeRender}
+                // editorTemplate={(props) => (
+                //     <AddEvent {...props} scheduleObj={scheduleObj} />
+                // )}
 
-
-
-                    // actionComplete={() => syncRowHeaderHeight()}
-                    // dataBound={() => syncRowHeaderHeight()}
-                    selectedDate={new Date(2026, 1, 1)}
-                    popupOpen={onPopupOpen}
-                    // editorTemplate={AddEventPopup}
-                    cssClass='custom-month-view'
-                    actionBegin={onActionBegin}
-                    // popupOpen={disableDefaultEditor}
-                    width="100%"
-                    height="550px"
-
-                    rowAutoHeight={true}
-                    eventClick={EventClicked}
-                    eventSettings={{ dataSource: events }}
-                    // eventSettings={{ dataSource: appointmentData }}
-                    group={{ resources: ['Resources', 'Group'] }}
-
-                    views={[
-                        "Day",
-                        "Week",
-                        "WorkWeek",
-                        "Month",
-                        "Agenda",
-                        { option: "TimelineDay" },
-                        {
-                            option: "TimelineWeek",
-                            interval: 16,
-                            slotCount: 4,
-                            cellWidth: 60,
-                            headerRows: [{ option: 'Month' }],
-
-                        },
+                // dragStart={onDragStart}
+                // drag={onDrag}
+                // dragStop={onDragStop}
 
 
 
-                        // {
-                        //     option: "TimelineWorkWeek",
-                        //     interval: 4,
-                        //     // showWeekend: false,
 
-                        //     startHour: "08:00",
-                        //     endHour: "14:00",
-                        //     timeScale: {
-                        //         enable: true,
-                        //         interval: 140,
-                        //         slotCount: 3,
-                        //     }
+                selectedDate={new Date(2026, 1, 1)}
+                popupOpen={onPopupOpen}
+                // editorTemplate={AddEventPopup}
+                cssClass='custom-month-view'
+                actionBegin={onActionBegin}
+                // popupOpen={disableDefaultEditor}
+                width="100%"
+                height="550px"
 
-                        // },
+                rowAutoHeight={false}
+                eventClick={EventClicked}
+                eventSettings={{ dataSource: events }}
+                // eventSettings={{ dataSource: appointmentData }}
+                group={{ resources: ['Resources', 'Group'] }}
 
+                views={[
+                    "Day",
+                    "Week",
+                    "WorkWeek",
+                    "Month",
+                    "Agenda",
+                    { option: "TimelineDay" },
+                    {
+                        option: "TimelineWeek",
+                        interval: 16,
+                        slotCount: 4,
+                        cellWidth: 60,
+                        headerRows: [{ option: 'Month' }],
 
-                        {
-                            option: "TimelineMonth",
-                            interval: 3,
-                            headerRows: [{ option: "Date" }]
-                        }
-
-                    ]}
-                    currentView="TimelineMonth"
-                    allowDragAndDrop={true}
-                    allowResizing={false}
-                    //  cellTemplate={<CellTempleteOne></CellTempleteOne>}
-                    renderCell={CellTempleteOne}
-
-
-                >
-                    <ResourcesDirective >
-                        <ResourceDirective
-                            field="ResourceId"
-                            name="Resources"
-                            dataSource={parent}
-                            textField="Name"
-                            idField="Id"
-                            colorField="Color"
+                    },
 
 
-                        // dataSource={resourceDataSourceSecondLayer}
 
-                        />
+                    // {
+                    //     option: "TimelineWorkWeek",
+                    //     interval: 4,
+                    //     // showWeekend: false,
+
+                    //     startHour: "08:00",
+                    //     endHour: "14:00",
+                    //     timeScale: {
+                    //         enable: true,
+                    //         interval: 140,
+                    //         slotCount: 3,
+                    //     }
+
+                    // },
 
 
-                        <ResourceDirective
-                            textField='Name'
-                            idField='Id'
-                            colorField='Color'
-                            groupIDField='GroupId'
-                            allowMultiple={true}
-                            field='GroupId'
-                            name='Group'
-                            title='Group Title'
-                            dataSource={child}
-                        // dataSource={resourceDataSourceFirstLayer}
-                        >
+                    {
+                        option: "TimelineMonth",
+                        interval: 3,
+                        headerRows: [{ option: "Date" }]
+                    }
 
-                        </ResourceDirective>
-                    </ResourcesDirective>
-                    <Inject services={[Day, Week, WorkWeek, Month, Agenda, TimelineViews, TimelineMonth, DragAndDrop, Resize]} />
+                ]}
+                currentView="TimelineMonth"
+                allowDragAndDrop={true}
 
-                </ScheduleComponent> :
-                <Loading></Loading>
+                allowResizing={false}
+                //  cellTemplate={<CellTempleteOne></CellTempleteOne>}
+                renderCell={CellTempleteOne}
 
-            }
+
+            >
+                <ResourcesDirective >
+                    <ResourceDirective
+                        field="ResourceId"
+                        name="Resources"
+                        dataSource={parent}
+                        textField="Name"
+                        idField="Id"
+                        colorField="Color"
+
+
+                    // dataSource={resourceDataSourceSecondLayer}
+
+                    />
+
+
+                    <ResourceDirective
+                        textField='Name'
+                        idField='Id'
+                        colorField='Color'
+                        groupIDField='GroupId'
+                        allowMultiple={true}
+                        field='GroupId'
+                        name='Group'
+                        title='Group Title'
+                        dataSource={child}
+                    // dataSource={resourceDataSourceFirstLayer}
+                    >
+
+                    </ResourceDirective>
+                </ResourcesDirective>
+                <Inject services={[Day, Week, WorkWeek, Month, Agenda, TimelineViews, TimelineMonth, DragAndDrop, Resize]} />
+
+            </ScheduleComponent>
+
+
+            <DialogComponentFun
+                conflictDialog={conflictDialog}
+                handleUserChoice={handleUserChoice}
+            />
+
+
+
 
 
             {/* <Loading></Loading> */}
