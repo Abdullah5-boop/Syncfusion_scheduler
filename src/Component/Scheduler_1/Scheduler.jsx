@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ScheduleComponent,
   Day, Week, WorkWeek, Month, Agenda,
@@ -9,6 +9,7 @@ import {
 } from '@syncfusion/ej2-react-schedule';
 
 import { DateTimePickerComponent } from '@syncfusion/ej2-react-calendars';
+import Rearranging from '../Other/Rearrange';
 
 /* -------------------- RESOURCES -------------------- */
 
@@ -29,6 +30,10 @@ const resourceDataSourceFirstLayer = [
   { Name: "B-5", Id: 7, Color: "#c3116aff", GroupId: 4 }
 ];
 
+
+
+
+
 /* -------------------- EVENTS -------------------- */
 
 const appointmentData = [
@@ -40,18 +45,11 @@ const appointmentData = [
     ResourceId: 2,
     GroupId: 4
   },
-  {
-    Id: 6,
-    Subject: '2',
-    StartTime: new Date(2026, 1, 1, 10, 0),
-    EndTime: new Date(2026, 1, 1, 11, 0),
-    ResourceId: 2,
-    GroupId: 4
-  },
+
   {
     Id: 7,
     Subject: '3',
-    StartTime: new Date(2026, 1, 1, 11, 0),
+    StartTime: new Date(2026, 1, 1, 11, 30),
     EndTime: new Date(2026, 1, 1, 12, 0),
     ResourceId: 2,
     GroupId: 4
@@ -59,7 +57,7 @@ const appointmentData = [
   {
     Id: 8,
     Subject: '4',
-    StartTime: new Date(2026, 1, 1, 12, 0),
+    StartTime: new Date(2026, 1, 1, 12, 30),
     EndTime: new Date(2026, 1, 1, 13, 0),
     ResourceId: 2,
     GroupId: 4
@@ -67,7 +65,7 @@ const appointmentData = [
   {
     Id: 9,
     Subject: '5',
-    StartTime: new Date(2026, 1, 1, 13, 0),
+    StartTime: new Date(2026, 1, 1, 13, 30),
     EndTime: new Date(2026, 1, 1, 14, 0),
     ResourceId: 2,
     GroupId: 4
@@ -77,9 +75,58 @@ const appointmentData = [
 /* -------------------- COMPONENT -------------------- */
 
 function Scheduler() {
+
+
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const timeRows = document.querySelectorAll(".e-time-slots");
+      const dateSlots = document.querySelectorAll(".e-header-cells");
+      const tableCell = document.querySelectorAll(".e-work-cells")
+
+
+      if (timeRows.length > 0) {
+        const timeRowParent = timeRows[0].parentElement;
+        console.log("time row parent -> ", timeRowParent);
+        timeRowParent.style.display = "none";
+      }
+
+      if (dateSlots.length > 0) {
+        console.log(dateSlots);
+        dateSlots.forEach(slot => {
+          slot.style.width = "50px";
+          slot.style.minWidth = "50px"; // IMPORTANT for table layout
+        });
+      }
+
+      if (tableCell.length > 0) {
+
+        // tableCell.forEach((cell, index) => {
+        //   if (!cell?.style) return;
+
+        //   if (index % 2 === 0) {
+        //     // Even index
+        //     cell.style.setProperty("border-width", "0 0 1px 1px", "important");
+        //   } else {
+        //     // Odd index
+        //    cell.style.setProperty("border-width", "0 1px 1px 0", "important");
+        //   }
+        // });
+
+      }
+    }, 0);
+
+
+    return () => clearTimeout(timer);
+  }, []);
+
+
+
   const onActionBegin = (args) => {
     if (args.requestType === 'eventCreate' || args.requestType === 'eventChange') {
       console.log('Saved Event:', args.data);
+      Rearranging(args, appointmentData)
+
     }
   };
 
@@ -92,12 +139,13 @@ function Scheduler() {
       rowAutoHeight={false}
       actionBegin={onActionBegin}
       allowDragAndDrop={true}
-      allowResizing={true}
+      // allowResizing={true}
       group={{ resources: ['Resources', 'Group'] }}
       eventSettings={{
         dataSource: appointmentData,
         enableMaxHeight: true
       }}
+
     >
 
       {/* ----------- VIEWS (eventHeight APPLIED HERE) ----------- */}
@@ -120,17 +168,26 @@ function Scheduler() {
 
         <ViewDirective
           option="TimelineWorkWeek"
-          eventHeight={22}
+          eventHeight={0}
           interval={4}
           showWeekend={true}
+          // headerRows={[{ option: 'Date' }]}
+
           workDays={[0, 1, 2, 3, 4, 6]}
           startHour="08:00"
-          endHour="14:00"
+          endHour="16:00"
           timeScale={{
             enable: true,
-            interval: 140,
-            slotCount: 3
+            interval: 480,
+            slotCount: 1
           }}
+          dateHeaderTemplate={(props) => (
+            <div style={{ textAlign: 'center', fontWeight: 'bold' }}>
+              {props.date.getDate()}  {/* Shows only the day number, e.g., 1, 2, ..., 15 */}
+            </div>
+          )}
+
+
         />
 
         <ViewDirective
