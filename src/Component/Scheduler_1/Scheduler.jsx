@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 import {
   ScheduleComponent,
   Day, Week, WorkWeek, Month, Agenda,
@@ -10,6 +10,7 @@ import {
 
 import { DateTimePickerComponent } from '@syncfusion/ej2-react-calendars';
 import Rearranging from '../Other/Rearrange';
+import RearrangeThree from '../Other/RearrangeThree';
 
 /* -------------------- RESOURCES -------------------- */
 
@@ -69,14 +70,31 @@ const appointmentData = [
     EndTime: new Date(2026, 1, 1, 14, 0),
     ResourceId: 2,
     GroupId: 4
+  },
+  {
+        Id: 10,
+    Subject: '5',
+    StartTime: new Date(2026, 1, 3, 9, 30),
+    EndTime: new Date(2026, 1, 4, 14, 0),
+    ResourceId: 2,
+    GroupId: 4
+  },
+  {
+    Id: 11,
+    Subject: '6',
+    StartTime: new Date(2026, 1, 5, 10, 0),
+    EndTime: new Date(2026, 1, 5, 12, 0),
+    ResourceId: 2,
+    GroupId: 4
   }
 ];
 
 /* -------------------- COMPONENT -------------------- */
 
 function Scheduler() {
-
-
+  const [popupActionStatus, setPopupActionStatus] = useState(false);
+  const popupRef = useRef(false);
+  let oldDataRef = useRef(null)
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -124,14 +142,90 @@ function Scheduler() {
 
   const onActionBegin = (args) => {
     if (args.requestType === 'eventCreate' || args.requestType === 'eventChange') {
-      console.log('Saved Event:', args.data);
-      Rearranging(args, appointmentData)
+
+      // navigator.clipboard.writeText(JSON.stringify(oldDataRef));
+      // let output = JSON.stringify({... oldDataRef.current});
+      //  console.log(output)
+
+      if (!popupRef.current && args.requestType === 'eventChange') {
+        console.log("popup is not open so this eventchange from dragging   ", popupRef.current);
+        popupRef.current = false;
+        //  Rearranging(args, appointmentData, oldDataRef.current,setPopupActionStatus,popupActionStatus);
+
+        RearrangeThree(args, appointmentData, oldDataRef.current);
+        return;
+
+      } else if (args.requestType === 'eventChange') {
+        console.log("-popup is open ", popupRef.current);
+        popupRef.current = false;
+      }
 
     }
   };
 
+
+  //   const onActionBegin = (args) => {
+  //   if (
+  //     args.requestType === 'eventCreate' ||
+  //     args.requestType === 'eventChange'
+  //   ) {
+  //     console.log('Saved Event:', args.data);
+
+
+  //     /* =========================================================
+  //        FIX: Preserve original time on Timeline drag & drop
+  //        ========================================================= */
+
+  //     if (args.requestType === 'eventChange' && args.changedRecords?.length) {
+
+  //       const changedEvent = args.changedRecords[0];
+
+  //       const originalEvent = appointmentData.find(
+  //         e => e.Id === changedEvent.Id
+  //       );
+
+  //       // Safety guard
+  //       if (!originalEvent) return;
+
+  //       const oldStart = new Date(originalEvent.StartTime);
+  //       const oldEnd = new Date(originalEvent.EndTime);
+
+  //       // Keep original duration
+  //       const duration =
+  //         oldEnd.getTime() - oldStart.getTime();
+
+  //       const newStart = new Date(changedEvent.StartTime);
+
+  //       // Restore original hour & minute
+  //       newStart.setHours(
+  //         oldStart.getHours(),
+  //         oldStart.getMinutes(),
+  //         0,
+  //         0
+  //       );
+
+  //       // Apply corrected values
+  //       changedEvent.StartTime = newStart;
+  //       changedEvent.EndTime = new Date(
+  //         newStart.getTime() + duration
+  //       );
+
+  //         Rearranging(args, appointmentData);
+  //     }
+  //   }
+  // };
+  const popupOpenFun = (args) => {
+
+    if (args.type === 'Editor') {
+      setPopupActionStatus(true);
+      popupRef.current = true;
+      console.log("Popup Opened -> ", oldDataRef.current);
+    }
+  }
   return (
     <ScheduleComponent
+      ref={oldDataRef}
+      popupOpen={popupOpenFun}
       selectedDate={new Date(2026, 1, 1)}
       height="550px"
       width="100%"
@@ -139,7 +233,8 @@ function Scheduler() {
       rowAutoHeight={false}
       actionBegin={onActionBegin}
       allowDragAndDrop={true}
-      // allowResizing={true}
+      allowResizing={false}
+
       group={{ resources: ['Resources', 'Group'] }}
       eventSettings={{
         dataSource: appointmentData,
