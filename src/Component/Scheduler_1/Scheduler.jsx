@@ -4,23 +4,43 @@ import {
     Inject, ResourcesDirective, ResourceDirective,
     TimelineViews, TimelineMonth, DragAndDrop, Resize
 } from '@syncfusion/ej2-react-schedule';
-import { useState } from 'react';
-import AddEventPopup from '../Popup/AddEventPopup';
+import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
+
+// import maindata from "../RealData/index2"
+import { useEffect, useRef, useState } from 'react';
+import AddEventPopup from '../Popup/EventShowPopup.jsx';
+import CellTempleteOne from '../CellTemplete/CellTempleteOne';
+import { appointmentDatas, appointmentData } from '../Other/MakeAppointment';
+import preparedData from "../RealData/indexAsync.js";
+import Loading from '../Popup/Loading.jsx';
 // import { BeforeOpenCloseMenuEventArgs, MenuEventArgs, MenuItemModel, ContextMenuComponent } from '@syncfusion/ej2-react-navigations';
+import { TooltipComponent } from '@syncfusion/ej2-react-popups';
+import Tooltip from '../Popup/ToolTip.jsx';
+import OnChangeHover from '../OnActionBegin/OnChangeHover.jsx';
+import FindConflictEvent from '../OnActionBegin/findConflictEvent.jsx';
+import OnDrag from '../Ondrag/Ondrag.jsx';
+import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns/index.js';
+import { DatePickerComponent } from '@syncfusion/ej2-react-calendars/index.js';
+import AddEvent from '../Popup/AddEvent.jsx';
+import EditorFooter from '../Popup/EditorFooter.jsx';
+import { createElement } from '@syncfusion/ej2-base';
+import { DropDownList } from '@syncfusion/ej2-dropdowns';
+import DialogComponentFun from '../Popup/DialogComponent.jsx';
+
 
 const special = [
     {
-        date: new Date(2025, 11, 16), // Dec 16, 2025
-        startTime: new Date(2025, 11, 16, 8, 0),
-        endTime: new Date(2025, 11, 16, 10, 0),
+        date: new Date(2026, 11, 16), // Dec 16, 2025
+        startTime: new Date(2026, 11, 16, 8, 0),
+        endTime: new Date(2026, 11, 16, 10, 0),
         isWorking: true,
         text: 'Public Holiday',
         cssClass: 'dec-16-holiday-cell'
     },
     {
-        date: new Date(2025, 11, 20), // Dec 16, 2025
-        startTime: new Date(2025, 11, 20, 8, 0),
-        endTime: new Date(2025, 11, 20, 12, 0),
+        date: new Date(2026, 11, 20), // Dec 16, 2025
+        startTime: new Date(2026, 11, 20, 8, 0),
+        endTime: new Date(2026, 11, 20, 12, 0),
         isWorking: true,
         text: 'nothing ',
         cssClass: 'dec-16-holiday-cell'
@@ -45,103 +65,209 @@ let resourceDataSourceFirstLayer = [
     { Name: "B-5", Id: 7, Color: "#c3116aff", GroupId: 4 }
 ];
 
-const appointmentData = [
-    // Multi-day event (Dec 17–19)
-    {
-        Id: 1,
-        Subject: 'Abdullah',
-        StartTime: new Date(2025, 11, 11, 9, 0),
-        EndTime: new Date(2025, 11, 11, 11, 0),
-        ResourceId: 2, //room  { Name: "B-2", Id: 4, Color: "#77f807ff", GroupId: 2 },
-        GroupId: 4 //a2
-    },
-
-    // Single-day meetings (Dec 20)
-    {
-        Id: 2,
-        Subject: 'Client Interview (Internal)',
-        StartTime: new Date(2025, 11, 18, 10, 0),
-        EndTime: new Date(2025, 11, 19, 13, 0),
-        ResourceId: 2,
-        GroupId: 3
-    },
-
-    {
-        Id: 3,
-        Subject: 'Tech Demo',
-        StartTime: new Date(2025, 11, 20, 11, 0),
-        EndTime: new Date(2025, 11, 24, 12, 0),
-        ResourceId: 3,
-        GroupId: 2
-    },
 
 
-];
+// const appointmentData = [
+//     // Multi-day event (Dec 17–19)
+//     {
+//         Id: 1,
+//         Subject: 'Abdullah',
+//         StartTime: new Date(2025, 11, 15, 9, 0),
+//         EndTime: new Date(2025, 11, 17, 11, 0),
+//         ResourceId: 2, //room  { Name: "B-2", Id: 4, Color: "#77f807ff", GroupId: 2 },
+//         GroupId: 4 //a2
+//     },
+
+//     // Single-day meetings (Dec 20)
+//     {
+//         Id: 2,
+//         Subject: 'Client Interview (Internal)',
+//         StartTime: new Date(2025, 11, 18, 10, 0),
+//         EndTime: new Date(2025, 11, 19, 13, 0),
+//         ResourceId: 2,
+//         GroupId: 3
+//     },
+
+//     {
+//         Id: 3,
+//         Subject: 'Tech Demo',
+//         StartTime: new Date(2025, 11, 20, 11, 0),
+//         EndTime: new Date(2025, 11, 21, 12, 0),
+//         ResourceId: 3,
+//         GroupId: 2
+//     },
+
+
+// ];
+
+
+// console.log(maindata)
+
+
+
+
+
+
 // 
 const DataFetch = (arg) => {
 
 }
 const EventClicked = (arg) => {
-    console.log("Event clike line 105 -> ", arg);
+    // console.log("Event clike line 105 -> ", arg);
 }
 
-const disableDefaultEditor = (args) => {
-
-    console.log("disableDefaultEditor fired ");
-
-};
 
 
 
 
-const onActionBegin = (args) => {
-    let specialDayConfictState = false;
-    if (args.requestType === "eventCreate" || args.requestType === "eventChange") {
-        const eventData = Array.isArray(args.data) ? args.data[0] : args.data;
 
-        console.log("onActionBegin -> ", eventData);
+function Scheduler() {
+    const scheduleRef = useRef(null);
+    const [showPopup, setShowPopup] = useState(false);
+    const [open, setOpen] = useState(false);
+    let [parent, setParent] = useState([])
+    let [child, setChild] = useState([])
+    let [line, setLine] = useState([])
+    const [events, setEvents] = useState([]);
+    const [pendingEventData, setPendingEventData] = useState(null);
+    const [conflictDialog, setConflictDialog] = useState(false);
+    let [agrsCancle, setargCancle] = useState(false)
 
+    // Removed invalid destructuring declaration
+    const scheduleObj = useRef(null);
+    const buttonObj = useRef(null);
+    const onPopupOpen = (args) => {
 
-        let startTime = new Date(eventData.StartTime);
-        let endTime = new Date(eventData.EndTime);
-        let resourceId = eventData.ResourceId;
-
-        const conflictEvent = appointmentData.find(evt => {
-            if (evt.Id === eventData.Id) return false;  // ignore same event on update
-            if (evt.ResourceId !== resourceId) return false;
-
-            const evtStart = new Date(evt.StartTime);
-            const evtEnd = new Date(evt.EndTime);
-
-            // overlap condition
-            return startTime < evtEnd && endTime > evtStart;
-        });
-        let dateMatch = "dateMatch";
-        let timematch = "timematch";
-
-
-
-        const es = new Date(eventData.StartTime)
-        const ee = new Date(eventData.EndTime)
-        function isSameDay(d1, d2) {
-            let data =
-                d1.getFullYear() === d2.getFullYear() &&
-                d1.getMonth() === d2.getMonth() &&
-                d1.getDate() === d2.getDate()
-            console.log("isSameDay data -> ", data);
-            return data ? "dateMatchDone" : "dataMatchFail";
-
+        if (args.type === 'Editor') {
+            if (!args.element.querySelector('.custom-field-row')) {
+                let row = createElement('div', { className: 'custom-field-row' });
+                let formElement = args.element.querySelector('.e-schedule-form');
+                formElement.firstChild.insertBefore(row, formElement.firstChild.firstChild);
+                let container = createElement('div', { className: 'custom-field-container' });
+                let inputEle = createElement('input', {
+                    className: 'e-field', attrs: { name: 'EventType' }
+                });
+                container.appendChild(inputEle);
+                row.appendChild(container);
+                let drowDownList = new DropDownList({
+                    dataSource: [
+                        { text: 'Public Event', value: 'public-event' },
+                        { text: 'Maintenance', value: 'maintenance' },
+                        { text: 'Commercial Event', value: 'commercial-event' },
+                        { text: 'Family Event', value: 'family-event' }
+                    ],
+                    fields: { text: 'text', value: 'value' },
+                    value: args.data.EventType,
+                    floatLabelType: 'Always', placeholder: 'Event Type'
+                });
+                drowDownList.appendTo(inputEle);
+                inputEle.setAttribute('name', 'EventType');
+            }
         }
-        function specialNotification(NotificationclassName) {
-            let form = document.querySelector(`.${NotificationclassName}`);
-            let errorMsg = document.createElement("div");
-            errorMsg.innerHTML = "Scheduling conflict with special working hours!";
-            errorMsg.style.color = "red";
-            errorMsg.style.fontWeight = "bold";
-            if (form) form.appendChild(errorMsg);
-            // return errorMsg;
+    };
+    console.log("_".repeat(50))
+    console.log({ line, parent, child })
+    console.log("_".repeat(50))
+    const onActionComplete = (args) => {
+        console.log("onActionComplete \n", args)
+        if (args.requestType === "eventCreated") {
+            // setEvents(prev => [...prev, args.data[0]]);
         }
-        function isWithinWorkingHours() {
+    }
+
+
+    const onDragStart = (args) => {
+        const el = args.element; // This is the drag helper that sticks to mouse
+
+        // Example styles
+        el.style.setProperty('opacity', '0.6', 'important');
+        el.style.setProperty('background-color', '#ff7675', 'important');
+        el.style.setProperty('border', '2px dashed #d63031', 'important');
+        el.style.setProperty('box-shadow', '0 8px 20px rgba(0,0,0,.3)', 'important');
+
+        // Optional: change text while dragging
+        const subjectEl = el.querySelector('.e-subject');
+        if (subjectEl) subjectEl.innerText = 'Dragging...';
+
+        console.log("drag start => ", args.data)
+    };
+
+    const handleUserChoice = (choice) => {
+        setConflictDialog(false);
+        console.log("handleUserChoice is hitted")
+        if (choice === 'override' && pendingEventData) {
+            console.log('User chose OVERRIDE');
+            setEvents(prev => [...prev, pendingEventData]);
+            
+        }
+
+        if (choice === 'cancel') {
+            setargCancle(true)
+            console.log('User cancelled event creation');
+        }
+
+        setPendingEventData(null);
+    };
+
+
+
+
+    const onActionBegin = (args) => {
+
+
+        if (args.requestType === "eventCreate") {
+            console.log("Final event data:", args.data);
+        }
+
+
+        let specialDayConfictState = false;
+
+        if (args.requestType === "eventCreate" || args.requestType === "eventChange") {
+            const eventData = Array.isArray(args.data) ? args.data[0] : args.data;
+
+            console.log("onActionBegin -> ", eventData);
+
+
+            let startTime = new Date(eventData.StartTime);
+            let endTime = new Date(eventData.EndTime);
+            let resourceId = eventData.ResourceId;
+
+            const conflictEvents = appointmentData.find(evt => {
+                if (evt.Id === eventData.Id) return false;  // ignore same event on update
+                if (evt.ResourceId !== resourceId) return false;
+
+                const evtStart = new Date(evt.StartTime);
+                const evtEnd = new Date(evt.EndTime);
+
+                // overlap condition
+                return startTime < evtEnd && endTime > evtStart;
+            });
+            let dateMatch = "dateMatch";
+            let timematch = "timematch";
+
+
+
+            const es = new Date(eventData.StartTime)
+            const ee = new Date(eventData.EndTime)
+            function isSameDay(d1, d2) {
+                let data =
+                    d1.getFullYear() === d2.getFullYear() &&
+                    d1.getMonth() === d2.getMonth() &&
+                    d1.getDate() === d2.getDate()
+                console.log("isSameDay data -> ", data);
+                return data ? "dateMatchDone" : "dataMatchFail";
+
+            }
+            function specialNotification(NotificationclassName) {
+                let form = document.querySelector(`.${NotificationclassName}`);
+                let errorMsg = document.createElement("div");
+                errorMsg.innerHTML = "Scheduling conflict with special working hours!";
+                errorMsg.style.color = "red";
+                errorMsg.style.fontWeight = "bold";
+                if (form) form.appendChild(errorMsg);
+                // return errorMsg;
+            }
+            // function isWithinWorkingHours() {
 
             special.forEach(s => {
                 let dateCheck = isSameDay(es, s.date);
@@ -169,146 +295,198 @@ const onActionBegin = (args) => {
                 }
             })
 
-
-
-            // for (const s of special) {
-            //     let dateCheck = isSameDay(es, s.date);
-            //     if (dateCheck === "dateMatchDone") {
-            //         if (
-            //             es.getTime() >= s.startTime.getTime() &&
-            //             ee.getTime() <= s.endTime.getTime()
-            //         ) 
-            //         { return "dateAndTimeMatch";
-
-            //          }
-            //         else {
-            //             return "DatetimeNotMatch";
-            //         }
-            //     }
-            //     else return "dateNotMatch";
-
-
-            //     // if (isSameDay(es, s.date)) {
-            //     //     if (
-            //     //         es.getTime() >= s.startTime.getTime() &&
-            //     //         ee.getTime() <= s.endTime.getTime()
-            //     //     ) { return true; }
-            //     //     else return false;
-            //     // }
-            //     // else return false;
-
-
-            // }
-            // return "loop does not work";
-        }
-
-        console.log("_".repeat(20), "\n", "map function");
-        console.log(special.map(s => isSameDay(s.startTime, es)));
-
-        // let dateStatus = isWithinWorkingHours();
-        // console.log("*_".repeat(20), "\n");
-        // console.log("dateStatus -> ", dateStatus);
-
-        console.log("_".repeat(20), "\n");
-
-
-        console.log("_".repeat(20), "\n", "foreach function");
-        console.log(isWithinWorkingHours());
-        console.log("_".repeat(20), "\n");
+            console.log("_".repeat(20), "\n");
 
 
 
-        if (conflictEvent) {
-            console.log("❌ Conflict detected with event:", conflictEvent);
+            const conflictEvent = FindConflictEvent(eventData, events);
 
-            let comp = document.querySelector(".e-title-text");
-            console.log("comp -> ", comp);
-            let newTitle = document.createElement("div");
-            newTitle.innerHTML = "Conflict detected with event: " + conflictEvent.Subject;
-            newTitle.style.color = "red";
-            newTitle.style.fontWeight = "bold";
-            if (comp) {
-                args.cancel = true;
-                comp.appendChild(newTitle);
+            if (conflictEvent) {
+                console.log("❌ Conflict detected with event:", conflictEvent);
 
+
+                // alert("This date is already booked!");
+
+
+                // setPendingEventData(eventData);
+
+                // Show Syncfusion dialog
+                // setConflictDialog(true);
+             
+                  
+                    // args.cancel = true;
+                
+
+                return;
             }
-            if (form) form.appendChild(errorMsg);
 
-            return;
+
+            console.log("✅ No conflict. Event can be created.");
         }
 
-        console.log("✅ No conflict. Event can be created.");
-    }
-
-
-};
-
-
-const onContextMenuOpen = (args) => {
-    // Only show menu when right-clicking an event
-    if (!args.element || !args.element.classList.contains("e-appointment")) {
-        args.cancel = true;
-    }
-};
-
-
-
-const onContextMenuClick = (args) => {
-    const scheduleObj = document.querySelector('.e-schedule').ej2_instances[0];
-
-    // get event details from clicked event element
-    const eventObj = scheduleObj.getEventDetails(args.element);
-
-    switch (args.item.id) {
-        case 'open':
-            scheduleObj.openEditor(eventObj, "Save");
-            break;
-
-        case 'delete':
-            scheduleObj.deleteEvent(eventObj.Id);
-            break;
-
-        case 'customAction':
-            alert("Custom Action clicked on event: " + eventObj.Subject);
-            break;
-
-        default:
-            break;
-    }
-};
-
-
-
-console.log("_".repeat(50));
-function Scheduler() {
-    const [showPopup, setShowPopup] = useState(false);
-    const [open, setOpen] = useState(false);
-
-    const openCustomPopup = (args) => {
-        // setEventData(data);
-        // args.cancel = true;
-
-        // setShowPopup(true);
-
-        // console.log("openCustomPopup data -> ", data);
 
     };
-    console.log("Scheduler component rendered ", showPopup);
+
+
+    const onDrag = (args) => {
+        OnDrag(args, child, line)
+        // console.log("_".repeat(50), '\n', '* end * ')
+    };
+
+
+
+
+
+
+    const onDragStop = (args) => {
+        console.log("onDragStop called")
+        const el = args.element;
+
+        // Reset styles
+        el.style.removeProperty('opacity');
+        el.style.removeProperty('background-color');
+        el.style.removeProperty('border');
+        el.style.removeProperty('box-shadow');
+
+        // Reset text
+        const subjectEl = el.querySelector('.e-subject');
+        if (subjectEl) subjectEl.innerText = args.data.Subject;
+        OnChangeHover(args, line, child)
+    };
+
+
+
+
+
+    // async function useData() {
+    //     const data = await preparedData;
+    //     setParent(data.layer_one);
+    //     setChild(data.children);
+    //     setLine(data.temps);
+    //     setLoading(true)
+    //     setEvents(data.temps);
+    //     // console.log(, data.children, data.temps);
+    // }
+
+
+
+    // useData();
+
+
+
+
+
+    useEffect(() => {
+        async function fetchData() {
+            const data = await preparedData;
+            setParent(data.layer_one);
+            setChild(data.children);
+            setLine(data.temps);
+            setEvents(data.temps);
+
+        }
+        fetchData();
+    }, []);
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const onAddClick = () => {
+        const today = new Date();
+
+        let Data =
+            [
+                {
+                    Id: 1,
+                    Subject: 'Conference',
+                    StartTime: new Date(
+                        today.getFullYear(),
+                        today.getMonth(),
+                        today.getDate(),
+                        9, 0
+                    ),
+                    EndTime: new Date(
+                        today.getFullYear(),
+                        today.getMonth(),
+                        today.getDate(),
+                        10, 0
+                    ),
+                    IsAllDay: false,
+                    GroupId: 1,
+                    ResourceId: 1
+                },
+                {
+                    Id: 2,
+                    Subject: 'Meeting',
+                    StartTime: new Date(
+                        today.getFullYear(),
+                        today.getMonth(),
+                        today.getDate(),
+                        10, 0
+                    ),
+                    EndTime: new Date(
+                        today.getFullYear(),
+                        today.getMonth(),
+                        today.getDate(),
+                        11, 30
+                    ),
+                    IsAllDay: false,
+                    GroupId: 1,
+                    ResourceId: 1
+                }
+            ];
+
+        scheduleObj.current.addEvent(Data);
+        buttonObj.current.element.setAttribute('disabled', 'true');
+    }
+
+
+    // console.log(line.find(l => l.LineId === 500000))
+
     return (
         <>
+            {/* <ButtonComponent id='add' title='Add' ref={buttonObj} onClick={onAddClick}>Add</ButtonComponent> */}
+
             <ScheduleComponent
-                // popupOpen={openCustomPopup}
+                ref={scheduleObj}
+                // actionComplete={onActionComplete}
+                // maxEventsPerRow={0}
+
+                // editorTemplate={(props) => (
+                //     <AddEvent {...props} scheduleObj={scheduleObj} />
+                // )}
+
+                // dragStart={onDragStart}
+                // drag={onDrag}
+                // dragStop={onDragStop}
+
+
+
+
+                selectedDate={new Date(2026, 1, 1)}
+                popupOpen={onPopupOpen}
                 // editorTemplate={AddEventPopup}
-                cssClass='schedule-cell-dimension'
+                cssClass='custom-month-view'
                 actionBegin={onActionBegin}
                 // popupOpen={disableDefaultEditor}
                 width="100%"
                 height="550px"
-                renderCell={DataFetch}
-                rowAutoHeight={true}
+
+                rowAutoHeight={false}
                 eventClick={EventClicked}
-                eventSettings={{ dataSource: appointmentData }}
+                eventSettings={{ dataSource: events }}
+                // eventSettings={{ dataSource: appointmentData }}
                 group={{ resources: ['Resources', 'Group'] }}
+
                 views={[
                     "Day",
                     "Week",
@@ -316,42 +494,61 @@ function Scheduler() {
                     "Month",
                     "Agenda",
                     { option: "TimelineDay" },
-                    { option: "TimelineWeek" },
                     {
-                        option: "TimelineWorkWeek",
-                        interval: 4,
-                        showWeekend: true,
-                        workDays: [0, 1, 2, 3, 4, 6],
-                        startHour: "08:00",
-                        endHour: "14:00",
-                        timeScale: {
-                            enable: true,
-                            interval: 140,
-                            slotCount: 3,
-                        }
+                        option: "TimelineWeek",
+                        interval: 16,
+                        slotCount: 4,
+                        cellWidth: 60,
+                        headerRows: [{ option: 'Month' }],
 
                     },
-                    { option: "TimelineMonth" }
+
+
+
+                    // {
+                    //     option: "TimelineWorkWeek",
+                    //     interval: 4,
+                    //     // showWeekend: false,
+
+                    //     startHour: "08:00",
+                    //     endHour: "14:00",
+                    //     timeScale: {
+                    //         enable: true,
+                    //         interval: 140,
+                    //         slotCount: 3,
+                    //     }
+
+                    // },
+
+
+                    {
+                        option: "TimelineMonth",
+                        interval: 3,
+                        headerRows: [{ option: "Date" }]
+                    }
 
                 ]}
                 currentView="TimelineMonth"
                 allowDragAndDrop={true}
-                allowResizing={true}
 
+                allowResizing={false}
+                //  cellTemplate={<CellTempleteOne></CellTempleteOne>}
+                renderCell={CellTempleteOne}
 
 
             >
                 <ResourcesDirective >
                     <ResourceDirective
-
-                        field="ResourceId"        // <-- MUST match appointmentData field
-                        title="Rooms / Labs"
-                        name="Resources"          // <-- used internally for binding
-                        allowMultiple={true}
-                        dataSource={resourceDataSourceSecondLayer}
-                        textField="Name"          // <-- must match resourceDataSource keys
+                        field="ResourceId"
+                        name="Resources"
+                        dataSource={parent}
+                        textField="Name"
                         idField="Id"
                         colorField="Color"
+
+
+                    // dataSource={resourceDataSourceSecondLayer}
+
                     />
 
 
@@ -364,31 +561,30 @@ function Scheduler() {
                         field='GroupId'
                         name='Group'
                         title='Group Title'
-                        dataSource={resourceDataSourceFirstLayer}
+                        dataSource={child}
+                    // dataSource={resourceDataSourceFirstLayer}
                     >
 
                     </ResourceDirective>
                 </ResourcesDirective>
-
-
-
-
-
-
-
-
-
-
-
-
                 <Inject services={[Day, Week, WorkWeek, Month, Agenda, TimelineViews, TimelineMonth, DragAndDrop, Resize]} />
 
-
-
-
-
-
             </ScheduleComponent>
+
+
+            <DialogComponentFun
+                conflictDialog={conflictDialog}
+                handleUserChoice={handleUserChoice}
+            />
+
+
+
+
+
+            {/* <Loading></Loading> */}
+
+
+
         </>
     );
 }

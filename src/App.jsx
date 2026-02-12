@@ -10,11 +10,11 @@ function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <> 
+    <div className=''> 
     {/* <Demo_1 ></Demo_1> */}
     {/* <h1>hello world</h1> */}
     <Scheduler></Scheduler>
-    </>
+    </div>
   )
 }
 

@@ -9,24 +9,37 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
-  "dependencies": {
-    "@syncfusion/ej2-react-grids": "^31.2.18",
-    "@syncfusion/ej2-react-navigations": "^31.2.16",
-    "@syncfusion/ej2-react-popups": "^31.2.12",
-    "@syncfusion/ej2-react-schedule": "^31.2.15",
-    "@syncfusion/ej2-react-treegrid": "^31.2.15",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
-  },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@tailwindcss/vite": "^4.1.18",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
+    "autoprefixer": "^10.4.23",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.18",
     "vite": "^7.2.4"
-  }
+  },
+"dependencies": {
+  "@syncfusion/ej2-base": "~31.1.17",
+  "@syncfusion/ej2-grids": "~31.1.17",
+  "@syncfusion/ej2-popups": "~31.1.17",
+  "@syncfusion/ej2-splitbuttons": "~31.1.17",
+
+  "@syncfusion/ej2-react-buttons": "~31.1.17",
+  "@syncfusion/ej2-react-calendars": "~31.1.17",
+  "@syncfusion/ej2-react-dropdowns": "~31.1.17",
+  "@syncfusion/ej2-react-popups": "~31.1.17",
+  "@syncfusion/ej2-react-schedule": "~31.1.17",
+  "@syncfusion/ej2-react-treegrid": "~31.1.17",
+
+  "react": "^19.2.0",
+  "react-dom": "^19.2.0"
+}
+
+
 }

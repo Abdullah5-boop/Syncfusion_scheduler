@@ -1,32 +1,7 @@
-/* #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
+@import "tailwindcss";
+@import "../node_modules/@syncfusion/ej2-base/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-react-buttons/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-react-popups/styles/material.css";
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
@@ -39,32 +14,135 @@
 
 .read-the-docs {
   color: #888;
-} */
+}
+
+*/
+
+/* Ensure the custom class has a background color */
+.weekend-cell {
+  background-color: #f5f5f5 !important;
+  height: 100%;
+  width: 100%;
+}
+
+
 .e-work-cell1 {
   width: 750px !important;
   /* height: 150px !important; */
   background-color: #146fbe !important;
 }
 
+.e-schedule .e-month-view .e-work-cells.e-weekend,
+.e-schedule .e-month-view .e-date-header.e-weekend {
+  background-color: #fff2cc !important;
+}
+
+.e-schedule .e-weekend {
+  background-color: #fff2cc !important;
+}
+
 /* ----------- TIMELINE CELL HEIGHT ------------ */
 .schedule-cell-dimension .e-timeline-view .e-resource-left-td,
 .schedule-cell-dimension .e-timeline-view .e-resource-cells,
 .schedule-cell-dimension .e-timeline-view .e-work-cells {
-    height: 60px !important;  /* increase row height */
+  height: 60px !important;
+  /* increase row height */
 }
 
 /* ----------- TIMELINE CELL WIDTH ------------ */
 .schedule-cell-dimension .e-timeline-view .e-time-slots {
-    min-width: 150px !important; /* width of each time slot */
+  min-width: 150px !important;
+  /* width of each time slot */
 }
 
 .schedule-cell-dimension .e-timeline-view .e-content-table td {
-    min-width: 150px !important; /* safe fallback */
+  min-width: 150px !important;
+  /* safe fallback */
 }
+
 .e-schedule .e-work-cells,
 .e-schedule .e-all-day-cells {
-  height: 60px !important;     /* Cell Height */
+  height: 60px !important;
+  /* Cell Height */
 }
-.dec-16-holiday-cell{
+
+.dec-16-holiday-cell {
   background-color: #7f0505 !important;
+}
+
+/* App.css */
+/* Target the columns within the month view's content wrap */
+/* Adjust the height of the month view cells */
+.custom-month-view.e-schedule .e-month-view .e-work-cells {
+  height: 100px !important; /* Set your desired height */
+}
+
+
+
+.e-schedule .e-timeline-view .e-appointment {
+  height: 22px !important;
+
+}
+
+/* clone */
+/* .e-schedul .e-drag-clone {
+  background-color: rgba(222, 46, 23, 0.9) !important;
+  border: 2px dashed #fdcb6e !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25) !important;
+  opacity: 0.95;
+  pointer-events: none; 
+} */
+
+
+/* template */
+.e-appointment {
+  height: 18px !important;
+  padding: 0;
+  margin: 0;
+  
+}
+
+/* dynamic row height  */
+.e-time-cells {
+    display: flex;
+    align-items: center; /* vertical align text */
+    padding: 0 4px;
+    box-sizing: border-box;
+}
+
+
+
+/* auto hight adjust */
+.e-schedule .e-resource-column-wrap tr {
+    height: auto !important;
+}
+
+.e-schedule .e-resource-column-wrap td {
+    white-space: normal;
+}
+/* add popup html */
+
+
+
+.conflict-dialog .conflict-wrapper {
+ height: 50vh;
+ width: 50vh;
+ background-color: #146fbe;
+}
+
+.conflict-dialog .conflict-icon {
+    font-size: 32px;
+    color: #e53935;
+}
+
+.conflict-dialog .conflict-text h4 {
+    margin: 0 0 6px;
+    color: #b71c1c;
+}
+
+.conflict-dialog .conflict-actions {
+    margin-top: 16px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
 }
